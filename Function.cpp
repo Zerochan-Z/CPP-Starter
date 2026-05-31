@@ -6,7 +6,7 @@ int add(int x, int y) {
 }
 
 int main() {
-    int result = add(5,3);
+    int result = add(-3,5);
     cout << "Sum: " << result << endl;
     return 0;
 }
