@@ -40,12 +40,24 @@ void ReverseArray (int arr[], int size) {
 int main() {
     int arr[5] = {2,3,4,5,6};
     int size = 5;
-    cout << "Data: " << arr[] << "\n";
-    cout << "Sum: " << SumArray << "\n";
-    cout << "Max: " << MaxArray << "\n";
-    cout << "Even number count/s: " << EvenNum << "\n";
-    cout << "Reverse array: " << ReverseArray << endl;
 
+    cout << "Original array: ";
+    for (int i=0; i <size; i++){
+        cout << arr[i] << ", ";
+    }
+    cout << endl;
+
+    cout << "Sum: " << SumArray(arr, size) << "\n";
+    cout << "Max: " << MaxArray(arr,size) << "\n";
+    cout << "Even number count/s: " << EvenNum(arr,size) << "\n";
+
+    ReverseArray(arr,size);
+    cout << "Reversed array: ";
+    for (int i = 0; i < size; i++){
+        cout << arr[i] << "";
+    }
+    cout << endl;
+    
     return 0;
 
 }
