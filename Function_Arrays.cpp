@@ -1,3 +1,11 @@
+/*
+Functions & Arrays
+Task 2.1: Find maximum in array
+Task 2.2: Reverse Array
+Task 2.3: Count Occurrences
+Task 2.4: Array Sum with Function
+*/
+
 #include <iostream>
 using namespace std;
 
