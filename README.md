@@ -1,4 +1,4 @@
-## ✅ C++ Complete Cheat Sheet – All Topics Combined (No Code, Just Descriptions)
+## ✅ Updated C++ Complete Cheat Sheet – Added Today's New Topics
 
 ---
 
@@ -11,6 +11,8 @@
 | `#include <string>` | Get string handling tools |
 | `#include <cctype>` | Get character check tools (isdigit) |
 | `#include <limits>` | Get input buffer tools (ignore) |
+| `#include <cstdlib>` | Get random number tools (rand) |
+| `#include <ctime>` | Get time tools (srand, time) |
 | `using namespace std;` | Write `cout` instead of `std::cout` |
 
 ---
@@ -52,11 +54,9 @@
 | Code | Description |
 |------|-------------|
 | `fixed` | Set as decimal format (not scientific) |
-| `setprecision(2)` | 2 decimal places (once apply to all after it)|
+| `setprecision(2)` | 2 decimal places |
 | `setw(10)` | Set field width to 10 spaces |
 | `left` / `right` | Left or right align output |
-
-**Example:** `cout << fixed << setprecision(2) << 3.5;` prints "3.50"
 
 ---
 
@@ -92,7 +92,7 @@
 | `i++` | Increase by one |
 | `i--` | Decrease by one |
 | `i += 2` | Increase by two |
-| `i < str.length()` | Loop condition (`.length()` like `len()`) |
+| `i < str.length()` | Loop condition |
 
 ---
 
@@ -102,7 +102,7 @@
 |------|-------------|
 | `arr[index]` | Access element at position |
 | `arr[0] = 5;` | Assign value to array element |
-| `sizeof(arr)/sizeof(arr[0])` | Get array length (C-style) |
+| `sizeof(arr)/sizeof(arr[0])` | Get array length |
 | `str.length()` | Get string length |
 | `str[i]` | Access character in string |
 | `str.substr(pos, len)` | Extract substring |
@@ -113,22 +113,47 @@
 
 | Code | Description |
 |------|-------------|
-| `void name() { }` | Function returns nothing |
+| `void name() { }` | Function returns nothing (no return needed) |
 | `int name() { return x; }` | Function returns integer |
+| `string name() { return str; }` | Function returns string |
+| `bool name() { return true/false; }` | Function returns boolean |
 | `double name() { return x; }` | Function returns double |
-| `void name(int a, double b) { }` | Function with parameters |
-| `void name(int& a) { }` | Pass by reference (& modifies original) |
+| `char name() { return c; }` | Function returns character |
+| `void name(int& a) { }` | Pass by reference (`&` modifies original) |
 | `int name(int arr[], int size)` | Function with array parameter |
 
-**Function Prototypes (declare before main):**
-| Example | Description |
-|---------|-------------|
-| `void displayMenu();` | No parameters, returns nothing |
-| `double calculateTotal(double prices[], int qty[], int size);` | With parameters, returns double |
+**Function Types Summary:**
+
+| Return Type | Return Needed | Call in `main()` |
+|-------------|---------------|------------------|
+| `void` | ❌ No | `name(data);` |
+| `int` | ✅ Yes | `cout << name(data);` |
+| `string` | ✅ Yes | `cout << name(data);` |
+| `bool` | ✅ Yes | `cout << name(data);` |
+| `double` | ✅ Yes | `cout << name(data);` |
+| `char` | ✅ Yes | `cout << name(data);` |
 
 ---
 
-## 🔄 Part 9: Type Conversions
+## 🎲 Part 9: Random Numbers
+
+| Code | Description |
+|------|-------------|
+| `#include <cstdlib>` | Required for `rand()` |
+| `#include <ctime>` | Required for `time()` |
+| `srand(time(0));` | Seed random number generator (once at start) |
+| `rand()` | Generate random number |
+| `rand() % max + min` | Random number between min and max |
+
+**Example:**
+| Code | Description |
+|------|-------------|
+| `rand() % 100 + 1` | Random number between 1 and 100 |
+| `rand() % 50` | Random number between 0 and 49 |
+
+---
+
+## 🔄 Part 10: Type Conversions
 
 | Code | Description |
 |------|-------------|
@@ -141,7 +166,7 @@
 
 ---
 
-## 📝 Part 10: Comments
+## 📝 Part 11: Comments
 
 | Code | Description |
 |------|-------------|
@@ -173,6 +198,7 @@
 | **Function (return)** | `int name() { return x; }` | `def name(): return x` |
 | **Pass by reference** | `void func(int& x) { }` | ❌ Not directly |
 | **Array in function** | `void func(int arr[], int size)` | `def func(arr):` |
+| **Random number** | `rand() % 100 + 1` | `random.randint(1, 100)` |
 | **Single comment** | `// comment` | `# comment` |
 | **Multi comment** | `/* comment */` | `""" comment """` |
 | **Import library** | `#include <library>` | `import library` |
@@ -187,4 +213,4 @@
 
 ## ✅ One Sentence Summary
 
-**C++ requires `#include` statements, semicolons `;`, curly braces `{}`, and explicit data types; Python uses indentation and dynamic typing – the logic (loops, conditionals, arrays, functions) works the same way in both languages.**
+**C++ requires `#include` statements, semicolons `;`, curly braces `{}`, explicit data types, and function return types (`void`, `int`, `string`, `bool`, `double`, `char`); Python uses indentation and dynamic typing – today we added random numbers (`rand()`, `srand(time(0))`) and function return type rules.** 💪
