@@ -12,6 +12,7 @@
 | `#include <iostream>` | Input/output tools (`cout`, `cin`) |
 | `#include <iomanip>` | Formatting tools (`setprecision`, `fixed`, `setw`) |
 | `#include <sstream>` | String stream tools (`stringstream`) |
+| `#include <fstream>` | File stream tools (`ifstream`, `ofstream`) |
 | `#include <string>` | String handling tools |
 | `#include <vector>` | Dynamic array tools (`vector`) |
 | `#include <cctype>` | Character check tools (`isdigit`) |
@@ -40,7 +41,23 @@
 
 ---
 
-## 📥 Part 3: Input & Output
+## 🏗️ Part 3: Structs (Custom Data Types)
+
+| Code | Description |
+|:---|:---|
+| `struct Student { string name; int mark; };` | Define a custom type with multiple fields |
+| `Student s1;` | Create a struct variable |
+| `s1.name = "Ali";` | Set a field using dot notation |
+| `cout << s1.name << s1.mark;` | Access fields for output |
+| `Student s2 = {"Bob", 85};` | Initialize struct at declaration |
+| `vector<Student> students;` | Create a vector of structs |
+| `students.push_back(s1);` | Add a struct to a vector |
+| `students[i].name` | Access a field of a struct inside a vector |
+| *(Remember the semicolon after `}`)* | `struct Student { ... };` ← don't forget |
+
+---
+
+## 📥 Part 4: Input & Output
 
 | Code | Description |
 |:---|:---|
@@ -51,13 +68,13 @@
 | `cin >> x;` | Read user input into variable |
 | `cin >> a >> b;` | Read multiple inputs |
 | `getline(cin, str);` | Read an entire line (including spaces) |
+| `cin.ignore();` | Discard leftover newline after `cin >>` before `getline` |
 | `cin.fail()` | Check if input failed |
 | `cin.clear()` | Clear input error flag |
-| `cin.ignore(10000, '\n')` | Discard bad input from buffer |
 
 ---
 
-## 🎨 Part 4: Formatting Output
+## 🎨 Part 5: Formatting Output
 
 | Code | Description |
 |:---|:---|
@@ -69,7 +86,31 @@
 
 ---
 
-## 🔀 Part 5: Conditionals (If-Else)
+## 📄 Part 6: File I/O (Reading & Writing Files)
+
+| Code | Description |
+|:---|:---|
+| `#include <fstream>` | Required header for file streams |
+| `ofstream outFile("data.txt");` | Open a file for writing (creates or overwrites) |
+| `ifstream inFile("data.txt");` | Open a file for reading |
+| `outFile << s.name << "," << s.mark << endl;` | Write data to file (CSV format) |
+| `while (getline(inFile, line)) { }` | Read file line by line |
+| `if (inFile.is_open()) { }` | Check if the file was opened successfully |
+| `outFile.close();` | Close the output file (good practice) |
+| `inFile.close();` | Close the input file (good practice) |
+
+### Parsing Data from a File
+
+| Code | Description |
+|:---|:---|
+| `stringstream ss(line);` | Create a stream from a line of text |
+| `getline(ss, name, ',');` | Extract a field until the comma |
+| `getline(ss, markStr, ',');` | Extract the next field |
+| `int mark = stoi(markStr);` | Convert string to integer |
+
+---
+
+## 🔀 Part 7: Conditionals (If-Else)
 
 | Code | Description |
 |:---|:---|
@@ -83,7 +124,7 @@
 
 ---
 
-## 🔁 Part 6: Loops
+## 🔁 Part 8: Loops
 
 | Code | Description |
 |:---|:---|
@@ -91,12 +132,12 @@
 | `for (int i = n-1; i >= 0; i--) { }` | Loop backwards |
 | `for (char c : str) { }` | Range-based for loop (C++11) |
 | `for (int i = 0; i < vec.size(); i++)` | Loop through all elements of a vector |
+| `for (Student s : students) { }` | Range-based loop for a vector of structs |
 | `while (condition) { }` | Check condition first, then run |
+| `while (getline(inFile, line)) { }` | Read a file until the end |
 | `do { } while (condition);` | Run first, then check condition |
 | `break;` | Exit loop immediately |
 | `continue;` | Skip to next iteration |
-
----
 
 ### Loop Operations
 
@@ -110,7 +151,7 @@
 
 ---
 
-## 📦 Part 7: Arrays, Vectors & Strings
+## 📦 Part 9: Arrays, Vectors & Strings
 
 ### Fixed Arrays
 
@@ -144,7 +185,7 @@
 
 ---
 
-## 🧩 Part 7B: String Parsing with `stringstream`
+## 🧩 Part 10: String Parsing with `stringstream`
 
 | Code | Description |
 |:---|:---|
@@ -162,7 +203,7 @@
 
 ---
 
-## ⚙️ Part 8: Functions
+## ⚙️ Part 11: Functions
 
 | Code | Description |
 |:---|:---|
@@ -173,33 +214,53 @@
 | `bool name() { return true/false; }` | Function returns boolean |
 | `char name() { return c; }` | Function returns character |
 | `void name(int& a) { }` | Pass by reference (`&` modifies original) |
-| `double name(vector<int>& v) { }` | Function takes vector by reference |
+| `void addStudent(vector<Student>& v) { }` | Function that modifies the original vector |
+| `void displayStudents(const vector<Student>& v) { }` | Function that only reads the vector |
+| `void saveToFile(const vector<Student>& v) { }` | Write vector data to a file |
+| `void loadFromFile(vector<Student>& v) { }` | Read file data into a vector |
 | `int name(int arr[], int size)` | Function with array parameter |
-
----
 
 ### Function Types Summary
 
 | Return Type | Return Needed | Call in `main()` |
 |:---|:---|:---|
-| `void` | ❌ No | `name(data);` |
-| `int` | ✅ Yes | `cout << name(data);` |
-| `string` | ✅ Yes | `cout << name(data);` |
-| `bool` | ✅ Yes | `cout << name(data);` |
-| `double` | ✅ Yes | `cout << name(data);` |
-| `char` | ✅ Yes | `cout << name(data);` |
+| `void` | ❌ No | `functionName(data);` |
+| `int` | ✅ Yes | `cout << functionName(data);` |
+| `string` | ✅ Yes | `cout << functionName(data);` |
+| `bool` | ✅ Yes | `cout << functionName(data);` |
+| `double` | ✅ Yes | `cout << functionName(data);` |
+| `char` | ✅ Yes | `cout << functionName(data);` |
 
 ---
+
+## 🧩 Part 12: Common Program Patterns
 
 ### Guard Clause Pattern
 
 | Pattern | Description | Example |
 |:---|:---|:---|
-| **Guard Clause** | Handle edge case first and `return` early. Then write normal logic below. | `if (vec.empty()) return 0.0;` |
+| **Guard Clause** | Handle edge case first, then write normal logic. | `if (vec.empty()) return;` |
+
+### Menu-Driven Program Pattern
+
+| Step | Code |
+|:---|:---|
+| 1. Display menu | `cout << "1. Add\n2. Display\n3. Save\n4. Exit\n";` |
+| 2. Get user choice | `int choice; cin >> choice;` |
+| 3. Act on choice | `if (choice == 1) addStudent(students);` |
+| 4. Loop until exit | `while (choice != 4) { }` |
+
+### Search Pattern
+
+| Step | Code |
+|:---|:---|
+| 1. Get search term | `string name; getline(cin, name);` |
+| 2. Loop through vector | `for (Student s : students)` |
+| 3. Compare and return/print | `if (s.name == name) { cout << s.mark; }` |
 
 ---
 
-## 🎲 Part 9: Random Numbers
+## 🎲 Part 13: Random Numbers
 
 | Code | Description |
 |:---|:---|
@@ -218,7 +279,7 @@
 
 ---
 
-## 🔄 Part 10: Type Conversions
+## 🔄 Part 14: Type Conversions
 
 | Code | Description |
 |:---|:---|
@@ -231,7 +292,7 @@
 
 ---
 
-## 📝 Part 11: Comments
+## 📝 Part 15: Comments
 
 | Code | Description |
 |:---|:---|
@@ -240,49 +301,6 @@
 
 ---
 
-## 📊 Part 12: C++ vs Python Summary
-
-| Concept | C++ | Python |
-|:---|:---|:---|
-| **Print text** | `cout << "text";` | `print("text")` |
-| **Print variable** | `cout << price;` | `print(price)` |
-| **Print formatted** | `cout << fixed << setprecision(2) << price` | `print(f"{price:.2f}")` |
-| **Read input** | `cin >> x;` | `x = input()` |
-| **Read full line** | `getline(cin, str);` | `input()` |
-| **Read integer** | `int x; cin >> x;` | `x = int(input())` |
-| **Parse numbers from string** | `stringstream ss(str); while (ss >> n)` | `list(map(int, str.split()))` |
-| **String variable** | `string name = "Alice";` | `name = "Alice"` |
-| **Dynamic array** | `vector<int> v;` | `list = []` |
-| **Add to dynamic array** | `v.push_back(x);` | `list.append(x)` |
-| **Array size** | `v.size()` | `len(list)` |
-| **Array empty check** | `v.empty()` | `not list` |
-| **Fixed array** | `int arr[3] = {1,2,3};` | `arr = [1,2,3]` |
-| **Array access** | `arr[0]` | `arr[0]` |
-| **If statement** | `if (x > 0) { }` | `if x > 0:` |
-| **Else if** | `else if (x < 0) { }` | `elif x < 0:` |
-| **Else** | `else { }` | `else:` |
-| **For loop range** | `for (int i = 0; i < n; i++)` | `for i in range(n):` |
-| **For-each loop** | `for (char c : str)` | `for c in str:` |
-| **While loop** | `while (condition) { }` | `while condition:` |
-| **Do-while** | `do { } while (condition);` | ❌ No equivalent |
-| **Function (no return)** | `void name() { }` | `def name():` |
-| **Function (return)** | `int name() { return x; }` | `def name(): return x` |
-| **Pass by reference** | `void func(int& x) { }` | ❌ Not directly |
-| **Guard clause** | `if (vec.empty()) return 0.0;` | `if not list: return 0.0` |
-| **Random number** | `rand() % 100 + 1` | `random.randint(1, 100)` |
-| **Format decimals** | `cout << fixed << setprecision(2) << x` | `print(f"{x:.2f}")` |
-| **Single comment** | `// comment` | `# comment` |
-| **Multi comment** | `/* comment */` | `""" comment """` |
-| **Import library** | `#include <library>` | `import library` |
-| **Main function** | `int main() { return 0; }` | `if __name__ == "__main__":` |
-| **Curly braces** | Required `{ }` | Not used |
-| **Semicolons** | Required `;` | Not required |
-| **Indentation** | Optional (recommended) | **Required** |
-| **Data types** | Must declare (`int x`) | Dynamic (`x = 5`) |
-| **Boolean values** | `true` / `false` | `True` / `False` |
-
----
-
 ## ✅ One Sentence Summary
 
-C++ requires `#include` statements, semicolons `;`, curly braces `{}`, explicit data types, and function return types; Python uses indentation and dynamic typing – **your cheat sheet now covers basics, strings, vectors, stringstream parsing, guard clauses, random numbers, and formatting.** 💪
+C++ requires `#include` statements, semicolons `;`, curly braces `{}`, explicit data types, and function return types; Python uses indentation and dynamic typing – **your cheat sheet now covers structs, file I/O, parsing data from files, menu-driven programs, the search pattern, and common function signatures for student management systems.** 💪
