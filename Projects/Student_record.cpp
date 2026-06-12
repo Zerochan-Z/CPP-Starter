@@ -1,58 +1,108 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include <string>
+#include <cctype>
 using namespace std;
 
-struct students {
+struct Students {
     string name;
-    int marks;
+    int mark;
 };
 
-void addStudent (vector <students>& student ) {
-    students s;
+void add (vector <Students> &student) {
+    Students s;
+
     cout << "Enter student's name: ";
     cin.ignore();
     getline(cin, s.name);
-    cout << "Enter student's marks: ";
-    cin >> s.marks;
+    cout << "Enter student's mark: ";
+    cin >> s.mark;
     student.push_back(s);
-    cout << "Student added.\n";
 }
 
-void displayStudent (vector <students>& student) {
+void search (vector <Students> &student) {
     if (student.empty()) {
-        cout << "No student info displayed!\n ";
+        cout << "No student info. Please insert one." << endl;
         return;
-    } 
+    }
+
+    string name;
+    cout << "Enter the student's name: ";
+    cin.ignore();
+    getline(cin, name);
+    bool found = false;
+
     for (int i = 0; i < student.size(); i++) {
-        cout << i+1 << ". " << student[i].name
-             << " - " << student[i].marks << endl;
+        if (student[i].name == name) {
+            cout << student[i].name << " - " << student[i].mark << endl;
+            found = true;
+        }
+    }
+    
+    if (!found) {
+        cout << "No certain student found." << endl;
     }
 }
 
+void info (vector <Students> &student) {
+    if (student.empty()) {
+        cout << "No student info." << endl;
+        return;
+    }
+
+    for (int i = 0; i < student.size(); i++) {
+        cout << i+1 << ". " << student[i].name << " - " << student[i].mark << endl;
+    }
+}
+
+int getValidChoice() {
+    string input;
+
+    while (true) {
+        cout << "Choice: ";
+        cin >> input;
+
+        bool isValid = true;
+        for (char c : input) {
+            if (!isdigit(c)) {
+                isValid = false;
+                break;
+            }
+        }
+        if (isValid) {
+            int choice = stoi(input);
+            if (choice >= 1 && choice <=4) {
+                return choice;
+            } else {
+                cout << "Enter 1 / 2 / 3 / 4 \n";
+            }
+        } else {
+            cout << "Invalid input. Please enter the number.";
+        }
+    }
+}
 int main() {
-    vector <students> student;
+    vector <Students> student;
     int choice;
 
-
-
     do {
-        cout << "\n1. Add a student.\n";
-        cout << "2. Display student info.\n";
-        cout << "3. Exit.\n";
-        cout << "Insert (1/2/3)\n";
-        cin >> choice;
+        cout << "\n1. Add a student\n";
+        cout << "2. Search a student with name\n";
+        cout << "3. Display all students' info\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice (1-4)\n";
+        choice = getValidChoice();
 
         if (choice == 1) {
-            addStudent(student);
+            add(student);
         } else if (choice == 2) {
-            displayStudent(student);
+            search(student);
         } else if (choice == 3) {
+            info(student);
+        } else if (choice == 4) {
             break;
-        } else {
-            cout << "Invalid choice. " << endl;
-        }
-    } while (choice != 3);
+        } 
+    } while (choice != 4);
 
     return 0;
 }
