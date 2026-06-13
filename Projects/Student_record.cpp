@@ -1,7 +1,8 @@
 #include <iostream>
-#include <vector>
-#include <string>
 #include <cctype>
+#include <string>
+#include <vector>
+#include <fstream>
 using namespace std;
 
 struct Students {
@@ -9,12 +10,38 @@ struct Students {
     int mark;
 };
 
+vector <Students> student;
+
+void save() {
+    ofstream outFile("output\Student_record.exe");
+    for (size_t i = 0; i < student.size(); i++) {
+        outFile << student[i].name << endl;
+        outFile << student[i].mark << endl;
+    } 
+    outFile.close();
+}
+
+void load() {
+    ifstream inFile("output\Student_record.exe");
+    if (!inFile) {
+        return;
+    }
+
+    Students s;
+    while(getline(inFile, s.name)) {
+        inFile >> s.mark;
+        inFile.ignore();
+        student.push_back(s);
+    }
+    inFile.close();
+}
+
 void add (vector <Students> &student) {
     Students s;
 
     cout << "Enter student's name: ";
     cin.ignore();
-    getline(cin, s.name);
+    getline(cin,s.name);
     cout << "Enter student's mark: ";
     cin >> s.mark;
     student.push_back(s);
@@ -22,35 +49,33 @@ void add (vector <Students> &student) {
 
 void search (vector <Students> &student) {
     if (student.empty()) {
-        cout << "No student info. Please insert one." << endl;
+        cout << "No student info." << endl;
         return;
     }
 
-    string name;
-    cout << "Enter the student's name: ";
+    string sname;
+    cout << "Enter student's name: ";
     cin.ignore();
-    getline(cin, name);
+    getline(cin, sname);
     bool found = false;
 
-    for (int i = 0; i < student.size(); i++) {
-        if (student[i].name == name) {
-            cout << student[i].name << " - " << student[i].mark << endl;
+    for (size_t i = 0; i < student.size(); i++ ) {
+        if (student[i].name == sname) {
+            cout << sname << " - " << student[i].mark << endl;
             found = true;
-        }
+        } 
     }
-    
+
     if (!found) {
         cout << "No certain student found." << endl;
     }
 }
 
-void info (vector <Students> &student) {
+void display(vector <Students> &student) {
     if (student.empty()) {
-        cout << "No student info." << endl;
-        return;
+        cout << "No student info to display." << endl;
     }
-
-    for (int i = 0; i < student.size(); i++) {
+    for (size_t i = 0; i < student.size(); i++) {
         cout << i+1 << ". " << student[i].name << " - " << student[i].mark << endl;
     }
 }
@@ -69,28 +94,30 @@ int getValidChoice() {
                 break;
             }
         }
+
         if (isValid) {
             int choice = stoi(input);
             if (choice >= 1 && choice <=4) {
                 return choice;
             } else {
-                cout << "Enter 1 / 2 / 3 / 4 \n";
+                cout << "Please enter 1 / 2 / 3 / 4 \n";
             }
         } else {
-            cout << "Invalid input. Please enter the number.";
+            cout << "Invalid input. Please enter the number stated. \n";
         }
     }
 }
+
 int main() {
-    vector <Students> student;
+    load();
     int choice;
 
     do {
-        cout << "\n1. Add a student\n";
-        cout << "2. Search a student with name\n";
-        cout << "3. Display all students' info\n";
-        cout << "4. Exit\n";
-        cout << "Enter choice (1-4)\n";
+        cout << "\n1. Add a student.\n";
+        cout << "2. Search a student with name.\n";
+        cout << "3. Display all students info.\n";
+        cout << "4. Exits.\n";
+        cout << "Enter choice (1-4).\n";
         choice = getValidChoice();
 
         if (choice == 1) {
@@ -98,10 +125,10 @@ int main() {
         } else if (choice == 2) {
             search(student);
         } else if (choice == 3) {
-            info(student);
+            display(student);
         } else if (choice == 4) {
             break;
-        } 
+        }
     } while (choice != 4);
 
     return 0;
