@@ -2,53 +2,46 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <cctype>
+#include <iomanip>
 using namespace std;
 
-struct Students {
+struct Student {
     string name;
     int mark;
 };
 
-vector <Students> student;
+vector <Student> student;
 
 void save() {
-    ofstream outFile("Students.txt");
-    if (!outFile) {
-        cout << "ERROR! No certain file.\n";
-        return;
-    }
+    ofstream outFile("students.txt");
 
     for (size_t i = 0; i < student.size(); i++) {
         outFile << student[i].name << endl;
-        outFile << student[i].mark << endl;
+        outFile << student[i].mark << endl; 
     }
-
+    
     outFile.close();
-    cout << "Saved " << student.size() << " studetn(s) to file. \n";
 }
 
 void load() {
-    ifstream inFile("Students.txt");
+    ifstream inFile("students.txt");
+    
     if (!inFile) {
-        cout << "ERROR no certain file!" << endl;
+        cout << "No certain file.\n";
         return;
     }
 
-    Students s;
-
-    while(getline(inFile, s.name)) {
+    Student s;
+    while (getline(inFile, s.name)) {
         inFile >> s.mark;
         inFile.ignore();
         student.push_back(s);
     }
-
     inFile.close();
-    cout << "Loaded " << student.size() << " student(s).\n";
 }
 
-void add() {
-    Students s;
+void addStudent() {
+    Student s;
 
     cout << "Enter student's name: ";
     cin.ignore();
@@ -59,32 +52,9 @@ void add() {
     save();
 }
 
-void search() {
+void display() {
     if (student.empty()) {
-        cout << "No student to search.\n";
-        return;
-    }
-
-    string name;
-    cout << "Enter the student's name: ";
-    cin.ignore();
-    getline(cin, name);
-
-    bool found = false;
-    for (size_t i = 0; i < student.size(); i++) {
-        if (student[i].name == name) {
-            cout << name << " - " << student[i].mark << endl;
-            found = true;
-        }
-    }
-    if (!found) {
-        cout << "No certain student." << endl;
-    }
-}
-
-void display () {
-    if (student.empty()) {
-        cout << "No student info." << endl;
+        cout << "No student info.\n";
         return;
     }
 
@@ -93,86 +63,106 @@ void display () {
     }
 }
 
-void del() {
+void search() {
     if (student.empty()) {
-        cout << "No student to delete.\n";
+        cout << "No student to search." << endl;
         return;
     }
+
     string name;
-    cout << "Enter the name of student to delete: ";
+    cout << "Enter the student name: ";
     cin.ignore();
-    getline(cin,name);
+    getline(cin, name);
 
     bool found = false;
     for (size_t i = 0; i < student.size(); i++) {
         if (student[i].name == name) {
-            student.erase(student.begin() + i);
-            cout << name << "student" << " deleted.\n";
+            cout << name << " - " << student[i].mark << endl;
             found = true;
-            save();
             break;
         }
     }
 
     if (!found) {
-        cout << name << " student not found.\n";
+        cout << "No certain student found." << endl;
+    }
+}
+
+void del() {
+    if (student.empty()) {
+        cout << "No student to delete." << endl;
+        return;
+    }
+
+    string name;
+    Student s;
+    cout << "Enter the student you want to delete: ";
+    cin.ignore();
+    getline(cin, name);
+
+    bool found = false;
+    for (size_t i = 0; i < student.size(); i++) {
+        if (student[i].name == name) {
+            student.erase(student.begin() + i);
+            found = true;
+            save();
+            break;
+        }
+    }
+    if (!found) {
+        cout << "Student " << name << " is not in the list." << endl;
     }
 }
 
 void average() {
-    if (student.empty()) {
-        cout << "No student's mark to calculate average.\n";
-        return;
-    }
-    string name;
     int total = 0;
-    for (size_t i = 0; i<student.size(); i++) {
+    for (size_t i= 0; i < student.size(); i++) {
         total = total + student[i].mark;
     }
 
     double avg = (double) total / student.size();
-    cout << "Average mark: " << avg << endl;
+    cout << fixed << setprecision(2);
+    cout << "Average: " << avg << endl;
 }
 
-void sortMark() {
+void sortmark() {
     if (student.empty()) {
-        cout << "No students to sort.\n";
+        cout << "No student to sort." << endl;
         return;
     }
 
-    vector <Students> sorted = student; // copy struct as new
+    vector <Student> sorted = student;
 
-    for (size_t i = 0; i < sorted.size() - 1; i++) {
-        for (size_t j = 0 ; j < sorted.size() -i -1; j++) {
-            if (sorted[j].mark < sorted[j+1].mark) {
-                Students temp = sorted[j];
+    for (size_t i = 0; i < sorted.size() -1; i++) {
+        for (size_t j = 0; j < sorted.size()- 1 -i; j++) {
+            if (sorted[j].mark <  sorted[j+1].mark) {
+                Student temp = sorted[j];
                 sorted[j] = sorted[j+1];
                 sorted[j+1] = temp;
             }
         }
     }
-
-    cout << "\n --- Students sorted by mark (Highest to Lowest) --- \n";
+    cout << "\n --- Students sorted by mark (High to Low) ---\n";
     for (size_t i = 0; i < sorted.size(); i++) {
         cout << i+1 << ". " << sorted[i].name << " - " << sorted[i].mark << endl;
     }
 }
 
-void sortName () {
+void sortName() {
     if (student.empty()) {
-        cout << "No students to sort.\n";
+        cout << "No student to sort." << endl;
         return;
     }
 
-    vector <Students> sorted = student;
+    vector <Student> sorted = student;
 
-    for (size_t i = 0; i < sorted.size() - 1; i++) {
-        for (size_t j = 0; j < sorted.size() - 1 - i; j++) {
+    for (size_t i = 0; i < sorted.size()-1; i++) {
+        for (size_t j = 0; j < sorted.size()-1-i; j++) {
             if (sorted[j].name > sorted[j+1].name) {
-                Students temp = sorted[j];
+                Student temp = sorted[j];
                 sorted[j] = sorted[j+1];
                 sorted[j+1] = temp;
-            }
+            } 
         }
     }
 
@@ -181,55 +171,32 @@ void sortName () {
         cout << i+1 << ". " << sorted[i].name << " - " << sorted[i].mark << endl;
     }
 }
-int validation() {
-    string input;
-
-    while(true) {
-        cout << "Choice (1-4): ";
-        cin >> input;
-
-        bool valid = true;
-        for (char c : input) {
-            if (!isdigit(c)) {
-                valid = false;
-                break;
-            }
-        }
-
-        if (valid) {
-            int choice = stoi(input);
-            if (choice >= 1 && choice <=8 ) {
-                return choice;
-            } else {
-                cout << "Please enter (1-4).\n";
-            }
-        }
-    }
-}
 
 int main() {
     load();
-
     int choice;
 
     do {
-        cout << "\n1. Add a student.\n";
-        cout << "2. Search student with name.\n";
-        cout << "3. Display all student.\n";
-        cout << "4. Delete student.\n";
-        cout << "5. Calculate average.\n";
-        cout << "6. Sorted by highest mark to lowest.\n";
-        cout << "7. Sorted name by A-Z";
-        cout << "8. Exit.\n";
-        choice = validation();
+        cout << "\n1. Add Student\n";
+        cout << "2. Search Student\n";
+        cout << "3. Display All Students\n";
+        cout << "4. Delete Student\n";
+        cout << "5. Average Mark\n";
+        cout << "6. Sort by Name (A-Z)\n";
+        cout << "7. Sort by Mark (High to Low)\n";
+        cout << "8. Exit\n";
+        cout << "Choice: ";
+        cin >> choice;
 
-        if (choice == 1) add();
-        else if (choice == 2) search();
-        else if (choice == 3) display();
+        if (choice == 1) addStudent();
+        else if (choice == 2) display();
+        else if (choice == 3) search();
         else if (choice == 4) del();
-        else if (choice == 5) average();
-        else if (choice == 6) sortMark();
-        else if (choice == 7) sortName;
-        else if (choice == 8) break;
-    } while (choice != 4);
+        else if (choice == 5) break;
+        else if (choice == 6) average();
+        else if (choice == 7) sortmark();
+        else if (choice == 8) sortName();
+    } while (choice != 8);
+
+    return 0;
 }
