@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 using namespace std;
 
 struct Student {
@@ -44,7 +45,7 @@ void addStudent() {
     Student s;
 
     cout << "Enter student's name: ";
-    cin.ignore();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, s.name);
     cout << "Enter student's mark: ";
     cin >> s.mark;
@@ -71,7 +72,7 @@ void search() {
 
     string name;
     cout << "Enter the student name: ";
-    cin.ignore();
+    cin.ignore(numeric_limits<streamsize>::max());
     getline(cin, name);
 
     bool found = false;
@@ -97,7 +98,7 @@ void del() {
     string name;
     Student s;
     cout << "Enter the student you want to delete: ";
-    cin.ignore();
+    cin.ignore(numeric_limits<streamsize>::max());
     getline(cin, name);
 
     bool found = false;
@@ -115,6 +116,11 @@ void del() {
 }
 
 void average() {
+    if (student.empty()) {
+        cout << "No student data.\n";
+        return;
+    }
+
     int total = 0;
     for (size_t i= 0; i < student.size(); i++) {
         total = total + student[i].mark;
@@ -192,10 +198,10 @@ int main() {
         else if (choice == 2) display();
         else if (choice == 3) search();
         else if (choice == 4) del();
-        else if (choice == 5) break;
-        else if (choice == 6) average();
-        else if (choice == 7) sortmark();
-        else if (choice == 8) sortName();
+        else if (choice == 5) average();
+        else if (choice == 6) sortmark();
+        else if (choice == 7) sortName();
+        else if (choice == 8) break;
     } while (choice != 8);
 
     return 0;
