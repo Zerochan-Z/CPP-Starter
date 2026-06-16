@@ -117,6 +117,62 @@ void del() {
     }
 }
 
+void edit() {
+    if (student.empty()) {
+        cout << "No student to edit.\n";
+        return;
+    }
+    string name;
+
+    cout << "\n ---> Edit/Add student's data <--- \n";
+    cout << "Enter the student's name: ";
+    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+    getline(cin, name);
+    bool found = false;
+
+    for (size_t i = 0; i < student.size(); i++) {
+        if (name == student[i].name) {
+            found = true;
+
+            cout << "\nCurrent: " << student[i].name << " - " << student[i].mark << endl;
+            
+            cout << "Enter new name (or press Enter to continue): ";
+            string newName;
+            getline(cin, newName);
+            if (!newName.empty()) {
+                student[i].name = newName;
+            }
+
+            cout << "1. Edit student's mark.\n";
+            cout << "2. Add mark with the same name.\n";
+            int choice;
+            cout << "Enter your choice (1 / 2): ";
+            cin >> choice;
+
+            if (choice == 1) {
+                cout << "From " << student[i].mark << "changed to ";
+                int newMark;
+                cin >> newMark;
+                student[i].mark = newMark;
+            } else if (choice == 2) {
+                Student newStudent;
+                newStudent.name = student[i].name;
+                cout << "Enter another mark for " << student[i].name << ": ";
+                cin >> newStudent.mark;
+                student.push_back(newStudent);
+                cout << "Added " << student[i].mark << "to" << student[i].name << endl;
+            } else cout << "Invalid choice. No changes made.\n";
+
+            save();
+            break;
+        }
+    }
+
+    if (!found) {
+        cout << "No certain student to edit/add.\n";
+        return;
+    }
+}
 void average() {
     if (student.empty()) {
         cout << "No student info to calculate.\n";
