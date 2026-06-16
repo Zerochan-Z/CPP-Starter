@@ -1,8 +1,8 @@
 #include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
 #include <iomanip>
+#include <vector>
+#include <string>
+#include <fstream>
 #include <limits>
 using namespace std;
 
@@ -15,95 +15,96 @@ vector <Student> student;
 
 void save() {
     ofstream outFile("students.txt");
+    if (!outFile) {
+        cout << "No certain file. Creating...";
+        return;
+    }
 
     for (size_t i = 0; i < student.size(); i++) {
         outFile << student[i].name << endl;
-        outFile << student[i].mark << endl; 
+        outFile << student[i].mark << endl;
     }
-    
     outFile.close();
 }
 
 void load() {
     ifstream inFile("students.txt");
-    
     if (!inFile) {
-        cout << "No certain file.\n";
         return;
     }
 
     Student s;
     while (getline(inFile, s.name)) {
         inFile >> s.mark;
-        inFile.ignore();
+        inFile.ignore(numeric_limits<streamsize>::max(), '\n');
         student.push_back(s);
     }
     inFile.close();
+    cout << student.size() << " student(s) loaded from 'students.txt'.\n";
 }
 
-void addStudent() {
+void add() {
     Student s;
 
-    cout << "Enter student's name: ";
+    cout << "Enter the student's name: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, s.name);
-    cout << "Enter student's mark: ";
+    cout << "Enter the student's mark: ";
     cin >> s.mark;
     student.push_back(s);
     save();
 }
 
-void display() {
-    if (student.empty()) {
-        cout << "No student info.\n";
-        return;
-    }
-
-    for (size_t i = 0; i < student.size(); i++) {
-        cout << i+1 << ". " << student[i].name << " - " << student[i].mark << endl;
-    }
-}
-
 void search() {
     if (student.empty()) {
-        cout << "No student to search." << endl;
+        cout << "No student to search.\n";
         return;
     }
-
     string name;
-    cout << "Enter the student name: ";
-    cin.ignore(numeric_limits<streamsize>::max());
-    getline(cin, name);
+
+    cout << "Enter student's name to find their marks: ";
+    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+    getline(cin,name);
 
     bool found = false;
     for (size_t i = 0; i < student.size(); i++) {
-        if (student[i].name == name) {
-            cout << name << " - " << student[i].mark << endl;
+        if (name == student[i].name) {
+            cout << name << " - " << student[i].mark;
             found = true;
             break;
         }
     }
-
     if (!found) {
-        cout << "No certain student found." << endl;
+        cout << "No certain student.\n";
+        return;
+    }
+}
+
+void display () {
+    if (student.empty()) {
+        cout << "No student to display.\n";
+        return;
+    }
+
+    for (size_t i = 0; i <student.size(); i++) {
+        cout << i+1 << ". " << student[i].name << " - " << student[i].mark << endl;
     }
 }
 
 void del() {
     if (student.empty()) {
-        cout << "No student to delete." << endl;
+        cout << "No student to delete.\n";
         return;
     }
-
     string name;
-    Student s;
-    cout << "Enter the student you want to delete: ";
-    cin.ignore(numeric_limits<streamsize>::max());
+    
+    cout << "Enter the student to delete: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, name);
 
     bool found = false;
     for (size_t i = 0; i < student.size(); i++) {
-        if (student[i].name == name) {
+        if (name == student[i].name) {
             student.erase(student.begin() + i);
             found = true;
             save();
@@ -111,18 +112,18 @@ void del() {
         }
     }
     if (!found) {
-        cout << "Student " << name << " is not in the list." << endl;
+        cout << "No certain student.\n";
+        return;
     }
 }
 
 void average() {
     if (student.empty()) {
-        cout << "No student data.\n";
+        cout << "No student info to calculate.\n";
         return;
     }
-
     int total = 0;
-    for (size_t i= 0; i < student.size(); i++) {
+    for (size_t i = 0; i < student.size(); i++) {
         total = total + student[i].mark;
     }
 
@@ -131,51 +132,49 @@ void average() {
     cout << "Average: " << avg << endl;
 }
 
-void sortmark() {
+void sortMark() {
     if (student.empty()) {
-        cout << "No student to sort." << endl;
+        cout << "No student info.\n";
         return;
     }
 
     vector <Student> sorted = student;
+    for (size_t i = 0; i < sorted.size()-1 ; i++) {
+        for (size_t j = 0; j < sorted.size() - 1 - i; j++) {
+            if (sorted[j].mark < sorted[j+1].mark) {
+                Student temp = sorted[j];
+                sorted [j] = sorted[j+1];
+                sorted[j+1] = temp;
+            }
+        }
+    }
 
-    for (size_t i = 0; i < sorted.size() -1; i++) {
-        for (size_t j = 0; j < sorted.size()- 1 -i; j++) {
-            if (sorted[j].mark <  sorted[j+1].mark) {
+    cout << " --- Student's marks (HIGH - LOW) --- \n";
+    for (size_t i = 0; i < sorted.size(); i++) {
+        cout << sorted[i].name << " - " << sorted[i].mark;
+    }
+}
+
+void sortName() {
+    if (student.empty()) {
+        cout << "No student info.\n";
+        return;
+    }
+    vector <Student> sorted = student;
+    for (size_t i = 0; i < sorted.size()-1 ; i++) {
+        for (size_t j = 0; j < sorted.size()-1 -i; j++) {
+            if (sorted[j].name > sorted[j+1].name) {
                 Student temp = sorted[j];
                 sorted[j] = sorted[j+1];
                 sorted[j+1] = temp;
             }
         }
     }
-    cout << "\n --- Students sorted by mark (High to Low) ---\n";
+
+    cout << " --- Student sorted by Name (A-Z) ---\n";
     for (size_t i = 0; i < sorted.size(); i++) {
-        cout << i+1 << ". " << sorted[i].name << " - " << sorted[i].mark << endl;
-    }
-}
-
-void sortName() {
-    if (student.empty()) {
-        cout << "No student to sort." << endl;
-        return;
-    }
-
-    vector <Student> sorted = student;
-
-    for (size_t i = 0; i < sorted.size()-1; i++) {
-        for (size_t j = 0; j < sorted.size()-1-i; j++) {
-            if (sorted[j].name > sorted[j+1].name) {
-                Student temp = sorted[j];
-                sorted[j] = sorted[j+1];
-                sorted[j+1] = temp;
-            } 
-        }
-    }
-
-    cout << "\n --- Students sorted by name (A-Z) --- \n";
-    for (size_t i = 0; i < sorted.size(); i++) {
-        cout << i+1 << ". " << sorted[i].name << " - " << sorted[i].mark << endl;
-    }
+        cout << sorted[i].name << " - " << sorted[i].mark;
+    } 
 }
 
 int main() {
@@ -183,23 +182,23 @@ int main() {
     int choice;
 
     do {
-        cout << "\n1. Add Student\n";
-        cout << "2. Search Student\n";
-        cout << "3. Display All Students\n";
-        cout << "4. Delete Student\n";
-        cout << "5. Average Mark\n";
-        cout << "6. Sort by Name (A-Z)\n";
-        cout << "7. Sort by Mark (High to Low)\n";
-        cout << "8. Exit\n";
+        cout << "\n1. Add a student.\n";
+        cout << "2. Search a student.\n";
+        cout << "3. Display all students.\n";
+        cout << "4. Delete a student.\n";
+        cout << "5. Calculate marks' average.\n";
+        cout << "6. Sorted Mark (High - Low).\n";
+        cout << "7. Sorted Name (A - Z).\n";
+        cout << "8. Exits.\n";
         cout << "Choice: ";
         cin >> choice;
 
-        if (choice == 1) addStudent();
-        else if (choice == 2) display();
-        else if (choice == 3) search();
+        if (choice == 1) add();
+        else if (choice == 2) search();
+        else if (choice == 3) display();
         else if (choice == 4) del();
         else if (choice == 5) average();
-        else if (choice == 6) sortmark();
+        else if (choice == 6) sortMark();
         else if (choice == 7) sortName();
         else if (choice == 8) break;
     } while (choice != 8);
