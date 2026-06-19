@@ -10,6 +10,7 @@ Status (Borrowed/Available)
 #include <string>
 #include <fstream>
 #include <limits>
+#include <iomanip>
 using namespace std;
 
 struct Book {
@@ -47,10 +48,10 @@ void load() {
 
     Book b;
     while (getline(inFile, b.name)) {
-        inFile >> b.author;
+        getline(inFile, b.author);
         inFile >> b.year;
         inFile >> b.status;
-        inFile.ignore(numeric_limits<streamsize>::max(); '\n');
+        inFile.ignore(numeric_limits<streamsize>::max(), '\n');
         book.push_back(b);
     }
 
@@ -82,7 +83,236 @@ void display() {
         return;
     }
 
-    for (size_t i = 0; i < book.size(); i++) {
-        cout << book.name << 
+    cout << left << setw(15) << "Name"
+         << setw(15) << "Author" 
+         << setw(8) << "Year"
+         << setw(10) << "Status" << endl;
+    cout << string(30,'-') << "\n";
+    
+    for (size_t i = 0; i <book.size(); i++) {
+        cout << left << setw(15) << book[i].name
+             << setw(15) << book[i].author
+             << setw(8) << book[i].year
+             << setw(10) << book[i].status << endl; 
     }
+
+}
+
+int Status(string& status) {
+    if (book.empty()) {
+        cout << "No book status.\n";
+        return 0;
+    }
+
+     if (status == "available") return 1;
+     if (status == "reserved") return 2;
+     if (status == "borrowed") return 3;
+     else return 4;
+}
+
+void del() {
+    if (book.empty()) {
+        cout << "No book to delete.\n";
+        return;
+    }
+    
+    string name;
+    cout << "Enter the book's name: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline (cin,name);
+    bool found = false;
+
+    for (size_t i = 0; i < book.size(); i++) {
+        if (name == book[i].name) {
+            found = true;
+            book.erase(book.begin() + i);
+            save();
+            break;
+        }
+    }
+
+    if (!found ) {
+        cout << "No certain book to delete.\n";
+        return;
+    }
+}
+
+void edit() {
+    if (book.empty()) {
+        cout << "No book to edit.\n";
+        return;
+    }
+
+    string name;
+    cout << "Enter the book's name you want to edit: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline(cin, name);
+    bool found = false;
+
+    for (size_t i = 0; i <book.size(); i++) {
+        if (name == book[i].name) {
+            found = true;
+
+            string newName;
+            cout << "Enter the new name (Enter to keep): ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            getline (cin, newName);
+
+            if (!newName.empty()) {
+                book[i].name = newName;
+            }
+
+            int choice;
+            cout << "\n1. Edit the manufacture year.\n";
+            cout << "2. Edit the author name.\n";
+            cout << "3. Edit the status of book.\n";
+            cout << "Choice (1-3): ";
+            cin >> choice;
+
+            if (choice == 1) {
+                int newYear;
+                cout << "Enter the new manufacture year: ";
+                cin >> newYear;
+                book[i].year = newYear;
+            } else if (choice == 2) {
+                string newAuthor;
+                cout << "Enter the new author: ";
+                cin >> newAuthor;
+                book[i].author = newAuthor;
+            } else if (choice == 3) {
+                string newStatus;
+                cout << "Enter the new status: ";
+                cin >> newStatus;
+                book[i].status = newStatus;
+            } else {
+                cout << "Invalid input. Please enter a number (1-3).\n";
+            }  
+            save();
+            break;
+        }
+    }
+    if (!found) {
+        cout << "No certain book to edit.\n";
+        return;
+    }
+}
+
+void sortByName() {
+    if (book.empty()) {
+        cout << "No book to arrange.\n";
+        return;
+    }
+
+    vector <Book> sorted = book;
+    for (size_t i = 0; i < sorted.size() - 1; i++) {
+        for (size_t j = 0; j < sorted.size() - 1 -i; j++) {
+            if (book[j].name > book[j+1].name) {
+                Book temp = book[j];
+                book[j] = book[j+1];
+                book[j+1] = temp;
+            }
+        }
+    }
+}
+
+void sortByYear() {
+    if (book.empty()) {
+        cout << "No book to arrange.\n";
+        return;
+    }
+
+    vector <Book> sorted = book;
+    for (size_t i = 0; i < sorted.size() - 1; i++) {
+        for (size_t j = 0; j < sorted.size() - 1 - i; j++) {
+            if (sorted[j].year < sorted[j+1].year) {
+                Book temp = sorted[j];
+                sorted[j] = sorted[j+1];
+                sorted[j+1] = temp;
+            }
+        }
+    }
+}
+
+void sortByAuthor() {
+    if (book.empty()) {
+        cout << "No book to arrange.\n";
+        return;
+    }
+
+    vector <Book> sorted = book;
+    for (size_t i = 0; i < sorted.size() - 1; i++) {
+        for (size_t j = 0; j < sorted.size() - 1 - i; j++) {
+            if (book[j].author > book[j+1].author) {
+                Book temp = sorted[j];
+                sorted[j] = sorted[j+1];
+                sorted[j+1] = temp;
+            }
+        }
+    }
+}
+
+void sortByStatus() {
+    if (book.empty()) {
+        cout << "No book to sort.\n";
+        return;
+    }
+
+    vector <Book> sorted = book;
+    for (size_t i = 0; i < sorted.size() - 1; i++) {
+        for (size_t j = 0; j < sorted.size() - 1 -i; j++) {
+            if (Status(sorted[j].status) > Status(sorted[j+1].status)) {
+                Book temp = sorted[j];
+                sorted[j] = sorted[j+1];
+                sorted[j+1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    load();
+    int choice;
+
+    do {
+        cout << "\n1. Add a book.\n";
+        cout << "2. Display all book.\n";
+        cout << "3. Delete a book.\n";
+        cout << "4. Edit a book's info.\n";
+        cout << "5. Sort by Name (A-Z).\n";
+        cout << "6. Sort by Author (A-Z).\n";
+        cout << "7. Sort by Year. (High to Low)\n";
+        cout << "8. Which can borrow.\n";
+        cout << "9. Exits.\n";
+        cout << "Choice (1-9): ";
+        cin >> choice;
+
+        if (choice == 1) {
+            add();
+        } else if (choice == 2) {
+            display();
+        } else if (choice == 3) {
+            del();
+        } else if (choice == 4) {
+            edit();
+        } else if (choice == 5) {
+            sortByName();
+            display();
+        } else if (choice == 6) {
+            sortByAuthor();
+            display();
+        } else if (choice == 7) {
+            sortByYear();
+            display();
+        } else if (choice == 8) {
+            sortByStatus();
+            display();
+        } else if (choice == 9) {
+            break;
+        } else {
+            cout << "Invalid input.";
+            return;
+        }
+    } while (choice != 9);
+
+    return 0;
 }
