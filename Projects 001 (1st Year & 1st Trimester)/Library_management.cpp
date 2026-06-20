@@ -1,23 +1,17 @@
-
-/* Book Title
-Author
-Year
-Status (Borrowed/Available)
-*/
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <limits>
 #include <iomanip>
+#include <cctype>
 using namespace std;
 
 struct Book {
     string name;
     string author;
     int year;
-    string status;
+    char status;
 };
 
 vector <Book> book;
@@ -25,7 +19,7 @@ vector <Book> book;
 void save() {
     ofstream outFile("books.txt");
     if (!outFile) {
-        cout << "No certain files. Creating...\n";
+        cout << "Error: Cannot save.\n";
         return;
     }
 
@@ -37,6 +31,7 @@ void save() {
     }
 
     outFile.close();
+    cout << book.size() << " book saved.\n";
 }
 
 void load() {
@@ -59,6 +54,7 @@ void load() {
     cout << book.size() << " book(s) loaded.\n";
 }
 
+
 void add() {
     Book b;
 
@@ -66,47 +62,41 @@ void add() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, b.name);
     cout << "Enter the author: ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, b.author);
     cout << "Enter the manufacture year: ";
     cin >> b.year;
-    cout << "Enter the status of the book: ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline (cin, b.status);    
+    cout << "A - Available, B - Borrowed, R - Reserved\n";
+    cout << "Enter the status of book: ";
+    cin >> b.status;
     book.push_back(b);
     save();
 }
 
-void display() {
+void display(vector <Book>& book) {
     if (book.empty()) {
         cout << "No book's info.\n";
         return;
     }
 
-    cout << left << setw(15) << "Name"
-         << setw(15) << "Author" 
+    cout << left << setw(25) << "Name"
+         << setw(20) << "Author" 
          << setw(8) << "Year"
          << setw(10) << "Status" << endl;
-    cout << string(30,'-') << "\n";
+    cout << string(63,'-') << "\n";
     
     for (size_t i = 0; i <book.size(); i++) {
-        cout << left << setw(15) << book[i].name
-             << setw(15) << book[i].author
+        cout << left << setw(25) << book[i].name
+             << setw(20) << book[i].author
              << setw(8) << book[i].year
              << setw(10) << book[i].status << endl; 
     }
 
 }
 
-int Status(string& status) {
-    if (book.empty()) {
-        cout << "No book status.\n";
-        return 0;
-    }
-
-     if (status == "available") return 1;
-     if (status == "reserved") return 2;
-     if (status == "borrowed") return 3;
+int Status(char status) {
+     if (status == 'A') return 1;
+     if (status == 'R') return 2;
+     if (status == 'B') return 3;
      else return 4;
 }
 
@@ -153,9 +143,11 @@ void edit() {
         if (name == book[i].name) {
             found = true;
 
+            cout << "Current info: " << book[i].name << "  (" << book[i].year
+                 << ") - " << book[i].author << " - " << book[i].status << endl;
             string newName;
             cout << "Enter the new name (Enter to keep): ";
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore();
             getline (cin, newName);
 
             if (!newName.empty()) {
@@ -177,11 +169,12 @@ void edit() {
             } else if (choice == 2) {
                 string newAuthor;
                 cout << "Enter the new author: ";
-                cin >> newAuthor;
+                cin.ignore();
+                getline(cin, newAuthor);
                 book[i].author = newAuthor;
             } else if (choice == 3) {
-                string newStatus;
-                cout << "Enter the new status: ";
+                char newStatus;
+                cout << "Enter the new status (A/R/B): ";
                 cin >> newStatus;
                 book[i].status = newStatus;
             } else {
@@ -213,6 +206,7 @@ void sortByName() {
             }
         }
     }
+    display(sorted);
 }
 
 void sortByYear() {
@@ -231,6 +225,8 @@ void sortByYear() {
             }
         }
     }
+
+    display(sorted);
 }
 
 void sortByAuthor() {
@@ -249,6 +245,8 @@ void sortByAuthor() {
             }
         }
     }
+
+    display(sorted);
 }
 
 void sortByStatus() {
@@ -267,6 +265,7 @@ void sortByStatus() {
             }
         }
     }
+    display(sorted);
 }
 
 int main() {
@@ -289,28 +288,24 @@ int main() {
         if (choice == 1) {
             add();
         } else if (choice == 2) {
-            display();
+            display(book);
         } else if (choice == 3) {
             del();
         } else if (choice == 4) {
             edit();
         } else if (choice == 5) {
             sortByName();
-            display();
         } else if (choice == 6) {
             sortByAuthor();
-            display();
         } else if (choice == 7) {
             sortByYear();
-            display();
         } else if (choice == 8) {
             sortByStatus();
-            display();
         } else if (choice == 9) {
             break;
         } else {
             cout << "Invalid input.";
-            return;
+            return 1;
         }
     } while (choice != 9);
 
