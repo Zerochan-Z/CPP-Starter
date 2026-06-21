@@ -16,7 +16,7 @@ struct Book {
 
 vector <Book> book;
 
-void save() {
+void saveFile() {
     ofstream outFile("books.txt");
     if (!outFile) {
         cout << "Error: Cannot save.\n";
@@ -34,7 +34,7 @@ void save() {
     cout << book.size() << " book saved.\n";
 }
 
-void load() {
+void loadFile() {
     ifstream inFile("books.txt");
     if (!inFile) {
         cout << "No student loaded.\n";
@@ -79,7 +79,7 @@ string toLower(string &str) {
     return result;
 }
 
-void add() {
+void addBook() {
     Book b;
 
     cout << "Enter the book's name: ";
@@ -94,10 +94,10 @@ void add() {
     cout << "Enter the status of book: ";
     cin >> b.status;
     book.push_back(b);
-    save();
+    saveFile();
 }
 
-void display(vector <Book>& book) {
+void displayBook(vector <Book>& book) {
     if (book.empty()) {
         cout << "No book's info.\n";
         return;
@@ -125,7 +125,7 @@ int Status(char status) {
      else return 4;
 }
 
-void del() {
+void deleteBook() {
     if (book.empty()) {
         cout << "No book to delete.\n";
         return;
@@ -142,7 +142,7 @@ void del() {
         if (name == book[i].name) {
             found = true;
             book.erase(book.begin() + i);
-            save();
+            saveFile();
             break;
         }
     }
@@ -153,7 +153,7 @@ void del() {
     }
 }
 
-void edit() {
+void editBook() {
     if (book.empty()) {
         cout << "No book to edit.\n";
         return;
@@ -207,7 +207,7 @@ void edit() {
             } else {
                 cout << "Invalid input. Please enter a number (1-3).\n";
             }  
-            save();
+            saveFile();
             break;
         }
     }
@@ -217,7 +217,7 @@ void edit() {
     }
 }
 
-void search() {
+void searchBook() {
     if (book.empty()) {
         cout << "No book to search.\n";
         return;
@@ -258,7 +258,7 @@ void sortByName() {
             }
         }
     }
-    display(sorted);
+    displayBook(sorted);
 }
 
 void sortByYear() {
@@ -278,7 +278,7 @@ void sortByYear() {
         }
     }
 
-    display(sorted);
+    displayBook(sorted);
 }
 
 void sortByAuthor() {
@@ -298,7 +298,7 @@ void sortByAuthor() {
         }
     }
 
-    display(sorted);
+    displayBook(sorted);
 }
 
 void sortByStatus() {
@@ -317,11 +317,11 @@ void sortByStatus() {
             }
         }
     }
-    display(sorted);
+    displayBook(sorted);
 }
 
 int main() {
-    load();
+    loadFile();
     int choice;
 
     do {
@@ -339,15 +339,15 @@ int main() {
         cin >> choice;
 
         if (choice == 1) {
-            add();
+            addBook();
         } else if (choice == 2) {
-            display(book);
+            displayBook(book);
         } else if (choice == 3) {
-            del();
+            deleteBook();
         } else if (choice == 4) {
-            edit();
+            editBook();
         } else if (choice == 5) {
-            search();
+            searchBook();
         } else if (choice == 6) {
             sortByName();
         } else if (choice == 7) {
