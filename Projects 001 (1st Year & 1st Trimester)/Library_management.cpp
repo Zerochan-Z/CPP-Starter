@@ -72,6 +72,13 @@ void add() {
     save();
 }
 
+string toUpper(string &str) {
+    string result = str;
+    for (size_t i = 0; i < result.length(); i++) {
+        result[i] = toupper(result[i]);
+    }
+    return result;
+}
 void display(vector <Book>& book) {
     if (book.empty()) {
         cout << "No book's info.\n";
@@ -85,8 +92,8 @@ void display(vector <Book>& book) {
     cout << string(63,'-') << "\n";
     
     for (size_t i = 0; i <book.size(); i++) {
-        cout << left << setw(25) << book[i].name
-             << setw(20) << book[i].author
+        cout << left << setw(25) << toUpper(book[i].name)
+             << setw(20) << toUpper(book[i].author)
              << setw(8) << book[i].year
              << setw(10) << book[i].status << endl; 
     }
@@ -190,6 +197,30 @@ void edit() {
     }
 }
 
+void search() {
+    if (book.empty()) {
+        cout << "No book to search.\n";
+        return;
+    }
+
+    string name;
+    bool found = false;
+    cout << "Enter the book's name: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline (cin, name);
+
+    for (size_t i = 0; i < book.size(); i++) {
+        if (book[i].name == name) {
+            found = true;
+            cout << name << " (" << book[i].year << ") - " << book[i].author << " [" << book[i].status << "] \n";
+            break;
+        }
+    }
+
+    if (!found) {
+        cout << "No certain book in list.\n";
+    }
+}
 void sortByName() {
     if (book.empty()) {
         cout << "No book to arrange.\n";
@@ -277,12 +308,13 @@ int main() {
         cout << "2. Display all book.\n";
         cout << "3. Delete a book.\n";
         cout << "4. Edit a book's info.\n";
-        cout << "5. Sort by Name (A-Z).\n";
-        cout << "6. Sort by Author (A-Z).\n";
-        cout << "7. Sort by Year. (High to Low)\n";
-        cout << "8. Which can borrow.\n";
-        cout << "9. Exits.\n";
-        cout << "Choice (1-9): ";
+        cout << "5. Search a book.\n";
+        cout << "6. Sort by Name (A-Z).\n";
+        cout << "7. Sort by Author (A-Z).\n";
+        cout << "8. Sort by Year. (High to Low)\n";
+        cout << "9. Which can borrow.\n";
+        cout << "10. Exits.\n";
+        cout << "Choice (1-10): ";
         cin >> choice;
 
         if (choice == 1) {
@@ -294,20 +326,21 @@ int main() {
         } else if (choice == 4) {
             edit();
         } else if (choice == 5) {
-            sortByName();
+            search();
         } else if (choice == 6) {
-            sortByAuthor();
+            sortByName();
         } else if (choice == 7) {
-            sortByYear();
+            sortByAuthor();
         } else if (choice == 8) {
-            sortByStatus();
+            sortByYear();
         } else if (choice == 9) {
+            sortByStatus();
+        } else if (choice == 10) {
             break;
         } else {
-            cout << "Invalid input.";
-            return 1;
+            cout << "Please enter a number.\n";
         }
-    } while (choice != 9);
+    } while (choice != 10);
 
     return 0;
 }
