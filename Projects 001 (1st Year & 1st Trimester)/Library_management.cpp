@@ -54,6 +54,30 @@ void load() {
     cout << book.size() << " book(s) loaded.\n";
 }
 
+string toTitle(string &str) {
+    string result = str;
+    bool newWord = true;
+
+    for (size_t i = 0; i < result.length(); i++) {
+        if (isspace(result[i])) {
+            newWord = true;
+        } else if (newWord) {
+            result[i] = toupper(result[i]);
+            newWord = false;
+        } else {
+            result[i] = tolower(result[i]);
+        }
+    }
+    return result;
+}
+
+string toLower(string &str) {
+    string result = str;
+    for (size_t i = 0; i < result.length(); i++) {
+        result[i] = tolower(result[i]);
+    }
+    return result;
+}
 
 void add() {
     Book b;
@@ -61,6 +85,7 @@ void add() {
     cout << "Enter the book's name: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, b.name);
+    b.name = toLower(b.name);
     cout << "Enter the author: ";
     getline(cin, b.author);
     cout << "Enter the manufacture year: ";
@@ -72,13 +97,6 @@ void add() {
     save();
 }
 
-string toUpper(string &str) {
-    string result = str;
-    for (size_t i = 0; i < result.length(); i++) {
-        result[i] = toupper(result[i]);
-    }
-    return result;
-}
 void display(vector <Book>& book) {
     if (book.empty()) {
         cout << "No book's info.\n";
@@ -92,8 +110,8 @@ void display(vector <Book>& book) {
     cout << string(63,'-') << "\n";
     
     for (size_t i = 0; i <book.size(); i++) {
-        cout << left << setw(25) << toUpper(book[i].name)
-             << setw(20) << toUpper(book[i].author)
+        cout << left << setw(25) << toTitle(book[i].name)
+             << setw(20) << toTitle(book[i].author)
              << setw(8) << book[i].year
              << setw(10) << book[i].status << endl; 
     }
@@ -117,6 +135,7 @@ void del() {
     cout << "Enter the book's name: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline (cin,name);
+    name = toLower(name);
     bool found = false;
 
     for (size_t i = 0; i < book.size(); i++) {
@@ -144,6 +163,7 @@ void edit() {
     cout << "Enter the book's name you want to edit: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, name);
+    name = toLower(name);
     bool found = false;
 
     for (size_t i = 0; i <book.size(); i++) {
@@ -208,6 +228,7 @@ void search() {
     cout << "Enter the book's name: ";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline (cin, name);
+    name = toLower(name);
 
     for (size_t i = 0; i < book.size(); i++) {
         if (book[i].name == name) {
@@ -230,10 +251,10 @@ void sortByName() {
     vector <Book> sorted = book;
     for (size_t i = 0; i < sorted.size() - 1; i++) {
         for (size_t j = 0; j < sorted.size() - 1 -i; j++) {
-            if (book[j].name > book[j+1].name) {
-                Book temp = book[j];
-                book[j] = book[j+1];
-                book[j+1] = temp;
+            if (toLower(sorted[j].name) > toLower(sorted[j+1].name)) {
+                Book temp = sorted[j];
+                sorted[j] = sorted[j+1];
+                sorted[j+1] = temp;
             }
         }
     }
@@ -269,7 +290,7 @@ void sortByAuthor() {
     vector <Book> sorted = book;
     for (size_t i = 0; i < sorted.size() - 1; i++) {
         for (size_t j = 0; j < sorted.size() - 1 - i; j++) {
-            if (book[j].author > book[j+1].author) {
+            if (toLower(book[j].author) > toLower(book[j+1].author)) {
                 Book temp = sorted[j];
                 sorted[j] = sorted[j+1];
                 sorted[j+1] = temp;
