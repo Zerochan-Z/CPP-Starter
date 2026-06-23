@@ -271,8 +271,11 @@ void searchBook() {
     int choice;
     cout << "1. Search by title\n";
     cout << "2. Search by author\n";
+    cout << "3. Search by year\n";
+    cout << "4. Search by status\n";
     cout << "Choice: ";
     cin >> choice;
+    bool found = false;
 
     if (choice == 1) {
         string title;
@@ -281,7 +284,6 @@ void searchBook() {
         getline(cin, title);
         string lowerTitle = toLower(title);
 
-        bool found = false;
         for (size_t i = 0; i < book.size(); i++) {
             if (toLower(book[i].name).find(lowerTitle) != string::npos) {
                 cout << "Found: " << book[i].name << " - " << book[i].author << endl;
@@ -297,7 +299,6 @@ void searchBook() {
         getline(cin, author);
         string lowerAuthor = toLower(author);
 
-        bool found = false;
         for (size_t i = 0; i < book.size(); i++) {
             if (toLower(book[i].author).find(lowerAuthor) != string::npos) {
                 cout << "Found: " << book[i].author << " - " << book[i].name << endl;
@@ -306,8 +307,29 @@ void searchBook() {
         }
         if (!found) cout << "No authors found.\n";
 
-    } else {
-        cout << "Invalid choice.\n";
+    } else if (choice == 3) {
+        int year;
+        cout << "Enter the year: ";
+        cin >> year;
+        for (size_t i = 0; i < book.size(); i++) {
+            if (book[i].year == year) {
+                cout << "Found: " << book[i].name << " (" << book[i].year << ") " << endl;
+                found = true;
+            }
+        }
+    } else if (choice == 4) {
+        char status;
+        cout << "Enter status (A/B/R): ";
+        cin >> status;
+        for (size_t i = 0 ; i < book.size() ; i++) {
+            if (book[i].status == status) {
+                cout << "Found: " << book[i].name << " - " << book[i].status << endl;
+                found = true;
+            }
+        }
+    }
+    if (!found) {
+        cout << "No certain book.\n";
     }
 }
 
