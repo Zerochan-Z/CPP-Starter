@@ -6,6 +6,8 @@
 #include <string>
 using namespace std;
 
+// GPA, Course Records, Ranking
+
 struct Student {
     string name;
     int mark;
