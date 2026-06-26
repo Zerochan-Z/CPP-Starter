@@ -390,8 +390,40 @@ void SortByStatus() {
 
 int main() {
     loadFile();
-    addBook();
-    SortByStatus();
+    int choice;
+
+    do {
+        cout << "\n1. Add a book.\n";
+        cout << "2. Display every book.\n";
+        cout << "3. Delete a book.\n";
+        cout << "4. Edit a book info.\n";
+        cout << "5. Search a book.\n";
+        cout << "6. Sort by Title (A - Z).\n";
+        cout << "7. Sort by Author. (A - Z).\n";
+        cout << "8. Sort by Year. (High to Low).\n";
+        cout << "9. Sort by Status (A - R).\n";
+        cout << "10. Exits.\n";
+        cout << "Choice: ";
+        cin >> choice;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter an integer.\n";
+            continue;
+        }
+        if (choice == 1) addBook();
+        else if (choice == 2) displayBook(book);
+        else if (choice == 3) deleteBook();
+        else if (choice == 4) editBook();
+        else if (choice == 5) searchBook();
+        else if (choice == 6) SortByTitle();
+        else if (choice == 7) SortByAuthor();
+        else if (choice == 8) SortByYear();
+        else if (choice == 9) SortByStatus();
+        else if (choice == 10) break;
+        else cout << "Enter (1-10) as your choice.\n";
+    } while (choice != 10);
     
     return 0;
 }
