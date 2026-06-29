@@ -176,5 +176,141 @@ public:
 
         book.push_back(b);
         saveFile();
+
+        void displayBook() {
+            if (book.empty()) {
+                cout << "No books to display.\n";
+                return;
+            }
+            cout << left << setw(28) << "Title"
+                 << setw(20) << "Author"
+                 << setw(8) << "Year"
+                 << setw(12) << "Status" << endl;
+            cout << string(65, '-') << endl;
+
+            for (size_t i = 0; i < book.size(); i++) {
+                book[i].display();
+            }
+
+            statusTotal();
+        }
+
+        void deleteBook() {
+            if (book.empty()) {
+                cout << "No book to delete.\n";
+                return;
+            }
+
+            string name;
+            cout << "Enter the title: ";
+            cin.ignore();
+            getline(cin, name);
+            string lowerName = toLower(name);
+            bool found = false;
+
+            for (size_t i = 0; i < book.size(); i++) {
+                if (toLower(book[i].title) == lowerName) {
+                    found = true;
+                    cout << "Confirm to delete? (Y/N): ";
+                    char c;
+                    cin >> c;
+                    if (c == 'Y') {
+                        book.erase(book.begin() + i);
+                        saveFile();
+                        cout << "Book deleted.\n";
+                    } else cout << "Deletion cancelled.\n";
+                    break;
+                }
+            }
+            if (!found) {
+                cout << "Book not found.\n";
+            }
+        }
+    }
+
+    void editBook() {
+        if (book.empty()) {
+            cout << "No book to edit.\n";
+            return;
+        }
+
+        string name;
+        cout << "Enter book title: ";
+        cin.ignore();
+        getline(cin, name);
+        bool found = false;
+
+        for (size_t i = 0; i < book.size(); i++) {
+            if (toLower(book[i].getName()).find(toLower(name)) != string ::npos ) {
+                found = true;
+
+                cout << "1. Edit book title.\n";
+                cout << "2. Edit book author.\n";
+                cout << "3. Edit book year.\n";
+                cout << "4. Edit book status.\n";
+                cout << "Choice: ";
+                int choice;
+                cin >> choice;
+                cin.ignore();
+
+                if (choice == 1) {
+                    string newName;
+                    cout << "Enter new name: ";
+                    getline(cin, newName);
+                    book[i].setName(newName);
+                } else if (choice == 2) {
+                    string newAuthor;
+                    cout << "Enter new author: ";
+                    getline(cin, newAuthor);
+                    book[i].setAuthor(newAuthor);
+                } else if (choice == 3) {
+                    int newYear;
+                    cout << "Enter new year: ";
+                    cin >> newYear;
+                    book[i].setYear(newYear);
+                } else  if (choice == 4) {
+                    char newStatus;
+                    cout << "Enter new status: ";
+                    cin >> newStatus;
+                    book[i].setStatus(newStatus);
+                } else cout << "Enter the correct choice. (1-4)\n";
+                saveFile();
+                break;
+            }
+        }
+        if (!found) {
+            cout << "No certain book.\n";
+        }
+    }
+
+    void searchBook() const{
+        if (book.empty()) {
+            cout << "No book to search.\n";
+            return;
+        }
+
+        int choice;
+        cout << "\n1. Search by title.\n";
+        cout << "2. Search by author.\n";
+        cout << "3. Search by year.\n";
+        cout << "4. Search by status.\n";
+        cout << "Choice: ";
+        cin >> choice;
+
+        bool found = false;
+
+        if (choice == 1) {
+            string title;
+            cout << "Enter title: ";
+            cin.ignore();
+            getline(cin, title);
+
+            for (size_t i = 0; i < book.size(); i ++) {
+                if (toLower(book[i].getName()).find(toLower(title)) != string ::npos) {
+                    found = true;
+                    cout << book[i].getName() << " (" << book[i].getYear() << ") - " << book[i].getAuthor() << " - " << book[i].getStatus() << endl;
+                }
+            }
+        }
     }
 }
