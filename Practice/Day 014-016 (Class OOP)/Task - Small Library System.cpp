@@ -3,17 +3,18 @@
 #include <iomanip>
 #include <limits>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class Book {
-private: 
+private:
     string title, author;
     int year;
     char status;
 
 public:
-    Book() : title(""), author (""), year(0), status('A') {}
-    Book (string t, string a, int y, char s) : title(t) , author(a), year(y), status(s) {}
+    Book() : title(""), author(""), year(0), status('A') {}
+    Book(string t, string a, int y, char s) : title(t), author(a), year(y), status(s) {}
 
     string getTitle() { return title; }
 
@@ -26,25 +27,71 @@ public:
     void setTitle(string t) { title = t; }
     void setAuthor(string a) { author = a; }
     void setYear(int y) { year = y; }
-    void setStatus (char s) {
+    void setStatus(char s) {
         if (s == 'A' || s == 'B' || s == 'R') {
             status = s;
-        } else cout << "Enter (A/B/R)" << endl;
+        }
+        else cout << "Enter (A/B/R)" << endl;
+    }
+
+    void saveFile(ofstream &out) {
+        out << title << endl;
+        out << author << endl;
+        out << year << endl;
+        out << status << endl;
+    }
+
+    void loadFile(ifstream& in) {
+        getline(in, title);
+        getline(in, author);
+        in >> year;
+        in >> status;
+        in.ignore();
     }
 
     void display() {
         cout << left << setw(22) << title
-             << setw(20) << author
-             << setw(8) << year
-             << setw(12) << status << endl;
+            << setw(20) << author
+            << setw(8) << year
+            << setw(12) << status << endl;
     }
 };
 
 class Library {
-private: 
+private:
     vector <Book> books;
 
 public:
+
+    void save() {
+        ofstream out("books.txt");
+        if (!out) {
+            cout << "No book saved.\n";
+            return;
+        }
+        
+        for (size_t i = 0; i < books.size(); i++) {
+            books[i].saveFile(out);
+        }
+
+        out.close();
+    }
+
+    void load() {
+        ifstream in("books.txt");
+        if (!in) {
+            cout << "No book load.\n";
+            return;
+        }
+
+        Book b;
+        while (!(in.eof())) {
+            b.loadFile(in);
+            books.push_back(b);
+        }
+
+        in.close();
+    }
 
     void addBook() {
         Book b;
@@ -72,6 +119,7 @@ public:
         b.setStatus(s);
 
         books.push_back(b);
+        save();
     }
 
     void displayBooks() {
@@ -81,17 +129,17 @@ public:
         }
 
         cout << left << setw(22) << "Title"
-             << setw(20) << "Author"
-             << setw(8) << "Year"
-             << setw(12) << "Status" << endl;
+            << setw(20) << "Author"
+            << setw(8) << "Year"
+            << setw(12) << "Status" << endl;
         cout << string(65, '-') << endl;
-            
+
         for (size_t i = 0; i < books.size(); i++) {
             books[i].display();
         }
     }
-    
-    void searchBook () {
+
+    void searchBook() {
         if (books.empty()) {
             cout << "No book to search.\n";
             return;
@@ -100,11 +148,11 @@ public:
         string search;
         cout << "Enter the title: ";
         cin.ignore();
-        getline (cin, search);
+        getline(cin, search);
         bool found = false;
 
         for (size_t i = 0; i < books.size(); i++) {
-            if (books[i].getTitle().find(search) != string ::npos) {
+            if (books[i].getTitle().find(search) != string::npos) {
                 found = true;
                 cout << books[i].getTitle() << " (" << books[i].getYear() << ") - " << books[i].getAuthor() << " - " << books[i].getStatus() << endl;
             }
@@ -123,6 +171,7 @@ public:
 
 int main() {
     Library lib;
+    lib.load();
 
     int choice;
     do {
