@@ -1,11 +1,9 @@
 #include <iostream>
 #include <string>
-#include <iomanip>
-#include <limits>
 using namespace std;
 
 class Person {
-private:
+protected:
     string name;
     int age;
 public:
@@ -18,7 +16,7 @@ public:
     void setName(string n) { name = n; }
     void setAge(int a) { age = a; }
     
-    void display() {
+    virtual void display() {
         cout << "Name: " << getName() << endl;
         cout << "Age: " << getAge() << endl;
     }
@@ -33,17 +31,11 @@ public:
     Student(): Person("", 0), studentID(260000), course("") {}
     Student(string n, int a, int id, string c): Person(n,a), studentID(id), course(c) {}
 
-    int getID() { return studentID; }
-    string getCourse() { return course; }
-
-    void setID(int id) { studentID = id; }
-    void setCourse(string c) { course = c; }
-
-    void displayStudent() {
+    void display() override {
         cout << "\n ---- Student Details ---- \n";
         display();
-        cout << "Student ID: " << getID() << endl;
-        cout << "Course: " << getCourse() << endl;
+        cout << "Student ID: " << studentID << endl;
+        cout << "Course: " << course << endl;
     }
 };
 
@@ -56,17 +48,11 @@ public:
     Lecturer(): Person("", 0), staffID(980000), department("") {}
     Lecturer(string n, int a, int id, string dep): Person(n, a), staffID(id), department(dep) {}
 
-    int getID() { return staffID; }
-    string getDep() { return department; }
-
-    void setID(int id) { staffID = id; }
-    void setDep(string dep) { department = dep; }
-
-    void displayStaff() {
+    void display() override{
         cout << "\n ---- Lecturer Details ---- \n";
-        display();
-        cout << "Staff ID: " << getID() << endl;
-        cout << "Department: " << getDep() << endl;
+        Person::display();
+        cout << "Staff ID: " << staffID << endl;
+        cout << "Department: " << department << endl;
     }
 };
 
@@ -74,13 +60,13 @@ int main() {
     Student s1("Mew mew", 3, 260001, "Business");
     Student s2("Ngiao", 6, 240423, "vet");
     
-    s1.displayStudent();
-    s2.displayStudent();
+    s1.display();
+    s2.display();
 
     Lecturer l1("Cutie", 40, 190312, "Green Technology");
     Lecturer l2("Old man", 83, 740284, "Chinese Architecture");
-    l1.displayStaff();
-    l2.displayStaff();
+    l1.display();
+    l2.display();
 
     return 0;
 }
