@@ -4,15 +4,15 @@ using namespace std;
 
 class BankAccount {
 private:
-    int accountNumber;
-    string ownerName;
+    int accountID;
+    string owner;
     double balance;
 
 public:
-    BankAccount(int accNum, string name, double bal) {
-        accountNumber = accNum;
-        ownerName = name;
-        balance = bal;
+    BankAccount(int id, string o, double b) { 
+        accountID = id;
+        owner = o;
+        balance = b; 
     }
 
     void deposit(double amount) {
@@ -20,42 +20,38 @@ public:
             balance += amount;
             cout << "Deposited: RM" << amount << endl;
         } else {
-            cout << "Invalid amount.\n";
+            cout << "Enter the correct amount.\n";
         }
     }
 
     void withdraw(double amount) {
-        if (amount > 0 && amount <= balance) {
+        if (amount > 0 && amount < balance) {
             balance -= amount;
-            cout << "Withdrawn: RM" << amount << endl;
+            cout << "Withdraw: RM" << amount << endl;
         } else if (amount > balance) {
-            cout << "Not enough balance! You have RM" << balance << endl;
+            cout << "Insufficient balance.\n";
         } else {
-            cout << "Invalid amount.\n";
+            cout << "Enter the correct amount.\n";
         }
     }
 
     void display() {
-        cout << "\n--- Account Details ---\n";
-        cout << "Account Number: " << accountNumber << endl;
-        cout << "Owner Name: " << ownerName << endl;
+        cout << "\n ---- Account Details ---- \n";
+        cout << "Account number: " << accountID << endl;
+        cout << "Owner name: " << owner << endl;
         cout << "Balance: RM" << balance << endl;
-        cout << "----------------------\n";
+        cout << string(20, '-');
     }
 };
 
 int main() {
-    BankAccount acc1(12345, "Alice", 1000);
+    BankAccount a1(100100, "Mew", 200);
 
-    acc1.display();
+    a1.display();
+    a1.deposit(100);
+    a1.withdraw(100);
+    a1.display();
 
-    acc1.deposit(500);
-    acc1.display();
-
-    acc1.withdraw(200);
-    acc1.display();
-
-    acc1.withdraw(2000);
-
+    a1.withdraw(2000);
     return 0;
 }
