@@ -45,6 +45,40 @@ int StatusInt (char status) {
     else return 4;
 }
 
+class Library {
+protected: 
+    string title, author;
+    int year;
+    char status;
+
+public:
+    Library() : title(""), author(""), year(0), status('A') {}
+    Library(string t, string a, int y, char s): title(t), author(a), year(y), status(s) {}
+
+    string getTitle() { return title; }
+    string getAuthor() { return author; }
+    int getYear() { return year; }
+    char getStatus() { return status; }
+
+    void setTitle(string t) { title = t; }
+    void setAuthor(string a) { author = a; }
+    void setYear(int y) { year = y; }
+    void setStatus(char s) { status = s; }
+
+    void virtual display() {
+        cout << left << setw(18) << "Title" 
+             << setw(12) << "Author"
+             << setw(8) << "Year"
+             << setw(12) << "Status" << endl;
+        cout << string(55, '-') << endl;
+
+        cout << left << setw(18) << getTitle()
+             << setw(12) << getAuthor()
+             << setw(8) << getYear()
+             << setw(12) << StatusStr(getStatus()) << endl;
+    }
+};
+
 int main() {
     // FIll in the blank
 
