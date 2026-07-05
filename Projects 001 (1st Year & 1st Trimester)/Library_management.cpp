@@ -31,6 +31,57 @@ string toLower(string &str) {
     return result;
 }
 
+string ValidStr(string &str) {
+    bool valid = false;
+
+    while (!valid) {
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore();
+            cout << "Wrong data input.\n";
+            continue;
+        } else {
+            valid = true;
+            break;
+        } 
+    }
+    return str;
+}
+
+int ValidInt(int &str) {
+    bool valid = false;
+
+    while (!valid) {
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore();
+            cout << "Wrong data input.\n";
+            continue;
+        } else {
+            valid = true;
+            break;
+        } 
+    }
+    return str;
+}
+
+char ValidChar(char &str) {
+    bool valid = false;
+
+    while (!valid) {
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore();
+            cout << "Wrong data input.\n";
+            continue;
+        } else {
+            valid = true;
+            break;
+        } 
+    }
+    return str;
+}
+
 string StatusStr(char status) {
     if (status == 'A') return "Available";
     if (status == 'B') return "Borrowed";
@@ -80,7 +131,7 @@ public:
         inFile.ignore();
     }
 
-    virtual void display() {
+    void display() {
         cout << left << setw(18) << toTitle(title)
              << setw(12) << toTitle(author)
              << setw(8) << getYear()
@@ -134,16 +185,20 @@ public:
         cout << "Enter title of book: ";
         cin.ignore();
         getline(cin, title);
+        ValidStr(title);
         setTitle(title);
         cout << "Enter author of book: ";
         getline(cin, author);
+        ValidStr(author);
         setAuthor(author);
         cout << "Enter year of book: ";
         cin >> year;
+        ValidInt(year);
         setYear(year);
         cout << "Available - A, Borrow - B, Reserved - R" << endl;
         cout << "Enter status of book: ";
         cin >> status;
+        ValidChar(status);
         setStatus(status);
 
         saveFile();
@@ -177,6 +232,7 @@ public:
         cout << "Enter the book title: ";
         cin.ignore();
         getline (cin, name);
+        ValidStr(name);
         bool found = false;
         string Lower = toLower(name);
 
@@ -210,6 +266,7 @@ public:
         cout << "Enter the title of book: ";
         cin.ignore();
         getline(cin, name);
+        ValidStr(name);
         string lower = toLower(name);
         bool found = false;
 
@@ -265,13 +322,172 @@ public:
         int choice;
         cout << "\n1. Search by title.\n";
         cout << "2. Search by author.\n";
-        cout << "3."
+        cout << "3.Search by Year.\n";
+        cout << "4. Search by Status.\n";
+        cout << "Choice: ";
+        cin >> choice;
+        bool found = false;
+        cin.ignore();
+
+        if (choice == 1) {
+            string search;
+            cout << "Enter the title: ";
+            getline(cin, search);
+            ValidStr(search);
+            search = toLower(search);
+
+            for (size_t i = 0; i < book.size(); i++) {
+                if (toLower(book[i].title).find(search) != string::npos) {
+                    found = true;
+                    cout << left << setw(18) << "Title"
+                         << setw(12) << "Author"
+                         << setw(8) << "Year"
+                         << setw(12) << "Status" << endl;
+                    cout << string(55, '-') << endl;
+
+                    cout << left << setw(18) << book[i].title << endl;
+                    cout << left << setw(12) << book[i].author << endl;
+                    cout << left << setw(8) << book[i].year << endl;
+                    cout << left << setw(12) << book[i].status << endl;
+                }
+            }
+        } else if (choice == 2) {
+            string search;
+            cout << "Enter author: ";
+            getline(cin, search);
+            ValidStr(search);
+            search = toLower(search);
+
+            for (size_t i = 0; i < book.size(); i++) {
+                if (toLower(book[i].title).find(search) != string ::npos) {
+                    found = true;
+
+                    cout << left << setw(18) << book[i].title << endl;
+                    cout << left << setw(12) << book[i].author << endl;
+                    cout << left << setw(8) << book[i].year << endl;
+                    cout << left << setw(12) << book[i].status << endl;
+                }
+            } 
+        } else if (choice == 3) {
+            int search;
+            cout << "Enter year: ";
+            cin >> search;
+            ValidInt(search);
+
+            for (size_t i = 0; i < book.size(); i++) {
+                if (book[i].year == search) {
+                    found = true;
+
+                    cout << left << setw(18) << book[i].title << endl;
+                    cout << left << setw(12) << book[i].author << endl;
+                    cout << left << setw(8) << book[i].year << endl;
+                    cout << left << setw(12) << book[i].status << endl;
+                } 
+            }
+        } else if (choice == 4) {
+            char search;
+            cout << "\nA - Available, B - Borrowed, R - Reserved.\n";
+            cout << "Enter status: ";
+            cin >> search;
+            ValidChar(search);
+            search = toupper(search);
+
+            for (size_t i = 0; i < book.size(); i++) {
+                if (search == book[i].status) {
+                    found = true;
+
+                    cout << left << setw(18) << book[i].title << endl;
+                    cout << left << setw(12) << book[i].author << endl;
+                    cout << left << setw(8) << book[i].year << endl;
+                    cout << left << setw(12) << book[i].status << endl;
+                }
+            }
+        } else cout << "Enter your choice (1 - 4)\n";
+        
+        if (!found) {
+            cout << "None found.\n";
+            return;
+        }
     }
+
+    void sortByName() {
+        if (book.empty()) {
+            cout << "No book to sort.\n";
+            return;
+        }
+
+        vector <Books> sorted = book;
+        for (size_t i = 0; i < sorted.size() - 1; i++) {
+            for (size_t k = 0; k < sorted.size() - 1 - i; k++) {
+                if (sorted[k].title > sorted[k+1].title) {
+                    swap(sorted[k], sorted[k+1]);
+                }
+            }
+        }
+        displayBook(sorted);
+    }
+
+    void sortByAuthor() {
+        if (book.empty()) {
+            cout << "No book to sort.\n";
+            return;
+        }
+
+        vector <Books> sorted = book;
+        for (size_t i = 0; i < sorted.size() - 1; i++) {
+            for (size_t k = 0; k < sorted.size() - 1 - i; k++) {
+                if (sorted[k].author > sorted[k+1].author) {
+                    Books temp = sorted[k];
+                    sorted[k] = sorted[k+1];
+                    sorted[k+1] = temp;
+                }
+            }
+        }
+        displayBook(sorted);
+    }
+
+    void sortByYear() {
+        if (book.empty()) {
+            cout << "No book to sort.\n";
+            return;
+        }
+
+        vector <Books> sorted = book;
+        for (size_t i = 0; i < sorted.size() - 1; i++) {
+            for (size_t k = 0; k < sorted.size() - 1 - i; k++) {
+                if (sorted[k].year < sorted[k+1].year) {
+                    swap(sorted[k], sorted[k+1]);
+                }
+            }
+        }
+        displayBook(sorted);
+    }
+
+    void sortByStatus() {
+               if (book.empty()) {
+            cout << "No book to sort.\n";
+            return;
+        }
+
+        vector <Books> sorted = book;
+        for (size_t i = 0; i < sorted.size() - 1; i++) {
+            for (size_t k = 0; k < sorted.size() - 1 - i; k++) {
+                if (StatusInt(sorted[k].status) > StatusInt(sorted[k+1].status)) {
+                    Books temp = sorted[k];
+                    sorted[k] = sorted[k+1];
+                    sorted[k+1] = temp;
+                }
+            }
+        }
+        displayBook(sorted);
+    }
+
 };
 
 int main() {
     Books sys;
     sys.loadFile();
+    vector <Books> book;
 
     int choice;
 
@@ -290,7 +506,7 @@ int main() {
         cin >> choice;
 
         if (choice == 1) sys.addBook();
-        else if (choice == 2) sys.displayBook();
+        else if (choice == 2) sys.displayBook(book);
         else if (choice == 3) sys.deleteBook();
         else if (choice == 4) sys.editBook();
         else if (choice == 5) sys.searchBook();
