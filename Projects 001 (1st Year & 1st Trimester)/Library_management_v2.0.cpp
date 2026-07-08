@@ -56,17 +56,17 @@ public:
     Book(): title(""), author(""), year(0), status('A') {} // default (needed when empty list/vector)
     Book (string t, string a, int y, char s): title(t), author(a), year(y), status(toupper(s)) {} // assigning values for each variable
 
-    string getTitle() { return title; }
-    string getAuthor() { return author; }
-    int getYear() { return year; }
-    char getStatus() { return status; }
+    string getTitle() const { return title; }
+    string getAuthor() const { return author; }
+    int getYear() const { return year; }
+    char getStatus() const { return status; }
 
     void setTitle(string t) { title = t; }
     void setAuthor(string a) { author = a; }
     void setYear(int y) { year = y; }
     void setStatus(char s) { status = toupper(s); }
 
-    void display() {
+    void display() const {
         cout << left << setw(20) << toTitle(title)
              << setw(15) << toTitle(author)
              << setw(8) << year
@@ -81,6 +81,8 @@ public:
         string line;
         getline(inFile, line);
 
+        if (line.find('|') == string::npos) return; // exits if nothing found
+
         size_t pos1 = line.find('|');
         size_t pos2 = line.find('|', pos1 + 1); // search '|' start from -> pos1 + 1
         size_t pos3 = line.find('|', pos2 + 1);
@@ -89,6 +91,7 @@ public:
         author = line.substr(pos1 + 1, pos2 - pos1 - 1 ); // start from pos1 + 1, take (pos2 - pos1 -1) characters
         year = stoi(line.substr(pos2 + 1, pos3 - pos2 - 1));
         status = line[pos3 + 1];
+
     }
 };
 
@@ -122,12 +125,12 @@ public:
             return;
         }
 
-        books.clear(); // clear memory storage not txt file
+        books.clear(); // clear memory storage only not txt file
         Book b;
 
-        while (true) {
+        while (!inFile.eof()) {
             b.loadFile(inFile);
-            if (inFile.eof()) break; // if till the end break function
+            if (inFile.eof()) break;
             books.push_back(b);
         }
 
@@ -143,7 +146,6 @@ public:
         cout << "\n ---- Add a new book ----\n";
         
         cout << "Enter title: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         getline(cin, title);
         cout << "Enter author: ";
         getline(cin, author);
@@ -157,24 +159,7 @@ public:
         saveFile();
     }
 
-    void displayBooks() {
-        if (books.empty()) {
-            cout << "No book to display.\n";
-            return;
-        }
-
-        cout << left << setw(20) << "Title"
-             << setw(15) << "Author"
-             << setw(8) << "Year"
-             << setw(12) << "Status" << endl;
-        cout << string(55, '-') << endl;
-
-        for (size_t i = 0; i < books.size(); i++) {
-            books[i].display();
-        }
-    }
-
-    void displayList(vector <Book> &list) {
+        void displayList(vector <Book> &list) {
         if (list.empty()) {
             cout << "No book to display.\n";
             return;
@@ -186,10 +171,15 @@ public:
              << setw(12) << "Status" << endl;
         cout << string(55, '-') << endl;
 
-        for (size_t i = 0; i < books.size(); i++) {
+        for (size_t i = 0; i < list.size(); i++) {
             list[i].display();
         }
     }
+
+    void displayBooks() {
+        displayList(books);
+    }
+
 
     void deleteBook() {
         if (books.empty()) {
@@ -199,7 +189,6 @@ public:
 
         string name;
         cout << "Enter book title: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         getline(cin, name);
         name = toLower(name);
         bool found = false;
@@ -235,7 +224,6 @@ public:
 
         string name;
         cout << "Enter book title: ";
-        cin.ignore(10000, '\n');
         getline(cin, name);
 
         bool found = false;
@@ -256,7 +244,7 @@ public:
                 cout << "Choice: ";
                 int choice;
                 cin >> choice;
-                cin.ignore(10000, '\n');
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 if (choice == 1) {
                     string newTitle;
@@ -313,6 +301,7 @@ public:
         if (choice == 1) {
             string search;
             cout << "Enter title keyword: ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             getline(cin, search);
             search = toLower(search);
 
@@ -326,9 +315,10 @@ public:
             string search;
             cout << "Enter author keyword: ";
             getline(cin, search);
+            search = toLower(search);
 
             for (size_t i = 0; i < books.size(); i++) {
-                if (toLower(books[i].getAuthor()).find(toLower(search)) != string::npos) {
+                if (toLower(books[i].getAuthor()).find(search) != string::npos) {
                     found = true;
                     results.push_back(books[i]);
                 }
@@ -423,7 +413,7 @@ public:
 
         for (size_t i = 0; i < sorted.size() - 1; i++) {
             for (size_t j = 0; j < sorted.size() - 1 - i; j++) {
-                if (sorted[j].getYear() > sorted[j + 1].getYear()) {
+                if (sorted[j].getYear() < sorted[j + 1].getYear()) {
                     Book temp = sorted[j];
                     sorted[j] = sorted[j + 1];
                     sorted[j + 1] = temp;
@@ -465,7 +455,6 @@ int main() {
     int choice;
 
     do {
-        cout << "\n1. Add Book.\n";
         cout << "\n1. Add Book\n";
         cout << "2. Display All Books\n";
         cout << "3. Delete Book\n";
