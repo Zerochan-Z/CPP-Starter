@@ -126,12 +126,19 @@ public:
 
     void returnBook(Book* book) {
         if (borrowedBooks.empty()) {
-            cout << "No book borrowed.\n";
+            cout << "No book to return.\n";
             return;
         }
 
-        Book b;
-        
+        for (size_t i = 0; i < borrowedBooks.size(); i++) {
+            if (borrowedBooks[i] == book) {
+                borrowedBooks.erase(borrowedBooks.begin() + i);
+                book->setStatus('A');
+                cout << "Book returned.\n";
+                return;
+            }
+        }
+        cout << "Book not found.\n";
     }
 };
 
