@@ -105,6 +105,7 @@ public:
     User(): name(""), UserID(000000), borrowLimit(0) {}
     User(string n, int id, int b): name(n), UserID(id), borrowLimit(b) {}
 
+    int getID() const { return UserID; }
     bool Limit() {
         if (borrowedBooks.size() <= borrowLimit) return true;
         cout << "Limits reached! \n";
@@ -142,9 +143,20 @@ public:
     }
 };
 
+class Student : public User {
+public:
+    Student(string name, int id) : User(name, id, 3) {}
+};
+
+class Staff : public User {
+public: 
+    Staff(string name, int id) : User(name, id, 5) {}
+};
+
 class Library {
 private:
     vector <Book> books;
+    vector <User*> users;
     string filename;
 
 public:
@@ -183,6 +195,37 @@ public:
 
         inFile.close();
         cout << books.size() << " book(s) loaded.\n";
+    }
+
+    bool borrowBook(int userID, string title) {
+        User* user = nullptr; // keep user as null in memory (User)
+
+        for (size_t i = 0; i < users.size(); i++) {
+            if (users[i]->getID() == userID) {
+                user = users[i];
+                break; //search id
+            }
+        }
+
+        if (user == nullptr) {
+            cout << "User not found.\n";
+            return false; // when user not found
+        }
+
+        Book* book = nullptr; // same login as search user
+        for (size_t i = 0; i < books.size(); i++) {
+            if (toLower(books[i].getTitle()) == toLower(title)) {
+                book = &books[i]; // book = address of certain book
+                break;
+            }
+        }
+
+        if (book == nullptr) {
+            cout << "Book not found";
+            return false;
+        }
+
+        return user->borrowBook(book); // call borrowbook from user class
     }
 
     void addBook() {

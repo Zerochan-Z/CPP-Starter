@@ -6,7 +6,10 @@ int main() {
     arr[0] = 10;
     arr[1] = 20;
     arr[2] = 30;
-    cout << arr[3] << endl;
+    
+    for (size_t i = 0; i < 3; i++) {
+        cout << arr[i] << endl;
+    }
     
     delete[] arr;
     return 0;
