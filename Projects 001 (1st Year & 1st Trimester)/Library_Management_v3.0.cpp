@@ -116,6 +116,7 @@ public:
         if (Limit()) {
             if (book->getStatus() == 'A') {
                 borrowedBooks.push_back(book);
+                book -> setStatus('B');
                 return true;
             } else {
                 cout << "Book not available.\n";
@@ -158,10 +159,20 @@ private:
     vector <Book> books;
     vector <User*> users;
     string filename;
+    string userFile;
 
 public:
     Library() { filename = "books.txt"; }
 
+    void saveUsers() {
+        ofstream outFile(userFile);
+        if (!outFile) {
+            cout << "Cannot save.\n";
+            return;
+        }
+
+        for (size_t i = 0; i < )
+    }
     void saveFile() {
         ofstream outFile(filename);
         if (!outFile) {
@@ -197,6 +208,10 @@ public:
         cout << books.size() << " book(s) loaded.\n";
     }
 
+    void addUser(User* user) {
+        users.push_back(user);
+    }
+
     bool borrowBook(int userID, string title) {
         User* user = nullptr; // keep user as null in memory (User)
 
@@ -221,11 +236,37 @@ public:
         }
 
         if (book == nullptr) {
-            cout << "Book not found";
+            cout << "Book not found\n";
             return false;
         }
 
         return user->borrowBook(book); // call borrowbook from user class
+    }
+
+    bool returnBook(int userID, string title) {
+        User* user = nullptr;
+        for (size_t i = 0; i < users.size(); i++) {
+            if (users[i]->getID() == userID) {
+                user = users[i];
+                break;
+            }
+        }
+        if (user == nullptr) {
+            cout << "User not found.\n";
+            return false;
+        }
+        
+        Book* book = nullptr;
+        for (size_t i = 0; i < books.size(); i++) {
+            if (toLower(books[i].getTitle()) == toLower(title)) {
+                book = &books[i];
+                break;
+            }
+        }
+        if (book == nullptr) {
+            cout << "Book not found.\n";
+            return false;
+        }
     }
 
     void addBook() {
@@ -249,7 +290,7 @@ public:
         saveFile();
     }
 
-        void displayList(vector <Book> &list) {
+    void displayList(vector <Book> &list) {
         if (list.empty()) {
             cout << "No book to display.\n";
             return;
@@ -269,7 +310,6 @@ public:
     void displayBooks() {
         displayList(books);
     }
-
 
     void deleteBook() {
         if (books.empty()) {
@@ -554,7 +594,10 @@ int main() {
         cout << "7. Sort by Author\n";
         cout << "8. Sort by Year\n";
         cout << "9. Sort by Status\n";
-        cout << "0. Exit\n";
+        cout << "10. Borrow Book\n";
+        cout << "11. Return Book.\n";
+        cout << "12. Add a user.\n";
+        cout << "13. Exit\n";
         cout << "Choice: ";
         cin >> choice;
         cin.ignore(10000, '\n');
@@ -569,10 +612,55 @@ int main() {
             case 7: lib.sortByAuthor(); break;
             case 8: lib.sortByYear(); break;
             case 9: lib.sortByStatus(); break;
-            case 0: cout << "Goodbye!\n"; break;
+            case 10: {
+                int id;
+                string title;
+                cout << "Enter user ID: ";
+                cin >> id;
+                cin.ignore();
+                cout << "Enter book title: ";
+                getline(cin, title);
+                lib.borrowBook(id, title);
+                break;
+            }
+            case 11: {
+                int id;
+                string title;
+                cout << "Enter user ID: ";
+                cin >> id;
+                cin.ignore();
+                cout << "Enter book title: ";
+                getline(cin, title);
+                lib.returnBook(id, title);
+                break;
+            }
+            case 12: {
+                string name;
+                int id, type;
+                cout << "Enter user name: ";
+                getline(cin, name);
+                cout << "Enter user ID: ";
+                cin >> id;
+                cin.ignore();
+                cout << "User type (1 = Student, 2 = Staff):";
+                cin >> type;
+                cin.ignore();
+
+                if (type == 1) {
+                    lib.addUser(new Student(name, id));
+                    cout << "Student added.\n";
+                } else if (type == 2) {
+                    lib.addUser(new Staff(name, id));
+                    cout << "Staff added.\n";
+                } else {
+                    cout << "Invalid type.\n";
+                }
+                break;
+            }
+            case 13: cout << "Goodbye!\n"; break;
             default: cout << "Invalid choice.\n";
         } // break is a must or else it runs every cases
-    } while (choice != 0);
+    } while (choice != 13);
 
     return 0;
     
