@@ -484,5 +484,7 @@ int main() {
         } // break is a must or else it runs every cases
     } while (choice != 0);
 
+    return 0;  
 
+}
 
