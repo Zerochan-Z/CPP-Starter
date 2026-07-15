@@ -56,16 +56,19 @@ public:
     Book(): title(""), author(""), year(0), status('A') {} // default (needed when empty list/vector)
     Book (string t, string a, int y, char s): title(t), author(a), year(y), status(toupper(s)) {} // assigning values for each variable
 
+    // Getter
     string getTitle() const { return title; }
     string getAuthor() const { return author; }
     int getYear() const { return year; }
     char getStatus() const { return status; }
 
+    // Setter
     void setTitle(string t) { title = t; }
     void setAuthor(string a) { author = a; }
     void setYear(int y) { year = y; }
     void setStatus(char s) { status = toupper(s); }
 
+    // for 1 book display
     void display() const {
         cout << left << setw(20) << toTitle(title)
              << setw(15) << toTitle(author)
@@ -73,6 +76,7 @@ public:
              << setw(12) << StatusStr(status) << endl;
     }
 
+    // save 1 book with | 
     void saveFile (ofstream& outFile) {
         outFile << title << " | " << author << " | " << year << " | " << status << endl;
     }
@@ -83,13 +87,14 @@ public:
 
         if (line.find('|') == string::npos) return; // exits if nothing found
 
-        size_t pos1 = line.find('|');
-        size_t pos2 = line.find('|', pos1 + 1); // search '|' start from -> pos1 + 1
-        size_t pos3 = line.find('|', pos2 + 1);
+        size_t pos1 = line.find(" | "); // arrange to " | " for tidiness
+        size_t pos2 = line.find(" | ", pos1 + 1); // search '|' start from -> pos1 + 1
+        size_t pos3 = line.find(" | ", pos2 + 1);
 
         title = line.substr(0, pos1);
-        author = line.substr(pos1 + 1, pos2 - pos1 - 1 ); // start from pos1 + 1, take (pos2 - pos1 -1) characters
-        year = stoi(line.substr(pos2 + 1, pos3 - pos2 - 1));
+        // " | " have 3 spaces so +3
+        author = line.substr(pos1 + 3, pos2 - pos1 - 3 ); // start from pos1 + 1, take (pos2 - pos1 -1) characters
+        year = stoi(line.substr(pos2 + 3, pos3 - pos2 - 3));
         status = line[pos3 + 1];
 
     }
@@ -99,24 +104,38 @@ class User {
 private:
     string name;
     int UserID, borrowLimit;
-    vector <Book*> borrowedBooks;
+    vector <Book*> borrowedBooks; // user's borrowed books
 
 public:
-    User(): name(""), UserID(000000), borrowLimit(0) {}
-    User(string n, int id, int b): name(n), UserID(id), borrowLimit(b) {}
+    User(): name(""), UserID(000000), borrowLimit(0) {} // as usual default
+    User(string n, int id, int b): name(n), UserID(id), borrowLimit(b) {} // as usual assign values
 
+    // Getter
     int getID() const { return UserID; }
-    bool Limit() {
-        if (borrowedBooks.size() <= borrowLimit) return true;
+    string getName() const { return name; }
+    virtual string getType() const = 0; 
+    // virtual offer overwrite, set type as 0 first later change the value with (override)
+
+    string getBorrowed() const {
+        string titles;
+        for (size_t i =0; i < borrowedBooks.size(); i++) {
+            if (i > 0) titles += ", "; // title = title + ", ";
+            titles += borrowedBooks[i]->getTitle(); // title = borrowedBooks.title + title
+        }
+        return titles;
+    }
+
+    bool Limit() { // function used as condition hence bool
+        if (borrowedBooks.size() < borrowLimit) return true;
         cout << "Limits reached! \n";
         return false;
     }
 
-    bool borrowBook(Book* book) {
-        if (Limit()) {
-            if (book->getStatus() == 'A') {
-                borrowedBooks.push_back(book);
-                book -> setStatus('B');
+    bool borrowBook(Book* book) { // condition
+        if (Limit()) { // if borrowlimit > borrowedbooks 
+            if (book->getStatus() == 'A') { // check whether book is available
+                borrowedBooks.push_back(book); // append to borrowedBooks
+                book -> setStatus('B'); // successfully borrowed
                 return true;
             } else {
                 cout << "Book not available.\n";
@@ -142,16 +161,25 @@ public:
         }
         cout << "Book not found.\n";
     }
+
+    void forceBorrow(Book* book) {
+        borrowedBooks.push_back(book);
+        book->setStatus('B');
+    }
 };
 
 class Student : public User {
 public:
     Student(string name, int id) : User(name, id, 3) {}
+    
+    string getType() const override { return "Student"; } // overwrite getType
 };
 
 class Staff : public User {
 public: 
     Staff(string name, int id) : User(name, id, 5) {}
+
+    string getType() const override { return "Staff"; }
 };
 
 class Library {
@@ -162,7 +190,7 @@ private:
     string userFile;
 
 public:
-    Library() { filename = "books.txt"; }
+    Library() { filename = "books.txt"; userFile = "users.txt"; }
 
     void saveUsers() {
         ofstream outFile(userFile);
@@ -171,8 +199,69 @@ public:
             return;
         }
 
-        for (size_t i = 0; i < )
+        for (size_t i = 0; i < users.size(); i++) {
+            User* u  = users[i];
+            outFile << u->getName() << " | " 
+                    << u->getID() << " | " 
+                    << u->getType() << " | "
+                    << u->getBorrowed() << endl;
+        }
+
+        outFile.close();
+        cout << users.size() << " user(s) saved.\n";
     }
+
+    void loadUsers() {
+        ifstream inFile(userFile);
+        if (!inFile) {
+            cout << "No users loaded.\n";
+            return;
+        }
+
+        string line;
+        while (getline(inFile, line)) {
+            if (line.empty() || line.find(" | ") == string::npos) continue;
+
+            size_t pos1 = line.find(" | ");
+            size_t pos2 = line.find(" | ", pos1 + 1);
+            size_t pos3 = line.find(" | ", pos2 + 1);
+
+            string name = line.substr(0, pos1);
+            int id = stoi(line.substr(pos1 + 3, pos2 - pos1 - 3));
+            string type = line.substr(pos2 + 3, pos3 - pos2 - 3);
+            string borrowTitles = line.substr(pos3 + 1);
+
+            User* user = nullptr;
+            if (type == "Student") {
+                user = new Student(name, id);
+            } else if (type == "Staff") {
+                user = new Staff(name, id);
+            } else continue;
+
+            if (!borrowTitles.empty()) {
+                size_t start = 0;
+                while (start < borrowTitles.length()) {
+                    size_t end = borrowTitles.find(',', start);
+                    string title = borrowTitles.substr(start, end - start);
+
+                    for (size_t i = 0; i < books.size(); i++) {
+                        if (toLower(books[i].getTitle()) == toLower(title)) {
+                            user->forceBorrow(&books[i]);
+                            break;
+                        }
+                    }
+
+                    if (end == string::npos) break;
+                    start = end + 1;
+                }
+            }
+            users.push_back(user);
+        }
+        inFile.close();
+        cout << users.size() << " user(s) loaded.\n";
+    }
+
+
     void saveFile() {
         ofstream outFile(filename);
         if (!outFile) {
@@ -210,6 +299,7 @@ public:
 
     void addUser(User* user) {
         users.push_back(user);
+        saveUsers();
     }
 
     bool borrowBook(int userID, string title) {
@@ -240,7 +330,11 @@ public:
             return false;
         }
 
-        return user->borrowBook(book); // call borrowbook from user class
+        if ( user->borrowBook(book)) { // call borrowbook from user class
+            saveUsers();
+            return true;
+        }
+        return false;
     }
 
     bool returnBook(int userID, string title) {
@@ -267,6 +361,9 @@ public:
             cout << "Book not found.\n";
             return false;
         }
+        user->returnBook(book);
+        saveUsers();
+        return true;
     }
 
     void addBook() {
@@ -444,6 +541,7 @@ public:
         } else if (choice == 2) {
             string search;
             cout << "Enter author keyword: ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             getline(cin, search);
             search = toLower(search);
 
@@ -581,6 +679,7 @@ public:
 int main() {
     Library lib;
     lib.loadFile();
+    lib.loadUsers();
 
     int choice;
 
@@ -665,5 +764,3 @@ int main() {
     return 0;
     
 }
-
-
