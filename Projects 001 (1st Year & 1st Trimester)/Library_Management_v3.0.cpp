@@ -88,14 +88,14 @@ public:
         if (line.find('|') == string::npos) return; // exits if nothing found
 
         size_t pos1 = line.find(" | "); // arrange to " | " for tidiness
-        size_t pos2 = line.find(" | ", pos1 + 1); // search '|' start from -> pos1 + 1
-        size_t pos3 = line.find(" | ", pos2 + 1);
+        size_t pos2 = line.find(" | ", pos1 + 3); // search " | " start from -> pos1 + 3
+        size_t pos3 = line.find(" | ", pos2 + 3);
 
         title = line.substr(0, pos1);
         // " | " have 3 spaces so +3
-        author = line.substr(pos1 + 3, pos2 - pos1 - 3 ); // start from pos1 + 1, take (pos2 - pos1 -1) characters
+        author = line.substr(pos1 + 3, pos2 - pos1 - 3 ); // start from pos1 + 3, take (pos2 - pos1 - 3) characters
         year = stoi(line.substr(pos2 + 3, pos3 - pos2 - 3));
-        status = line[pos3 + 1];
+        status = line[pos3 + 3];
 
     }
 };
@@ -168,14 +168,14 @@ public:
     }
 };
 
-class Student : public User {
+class Student : public User { //inheritance so User must be User*
 public:
     Student(string name, int id) : User(name, id, 3) {}
     
     string getType() const override { return "Student"; } // overwrite getType
 };
 
-class Staff : public User {
+class Staff : public User { //inheritance so User must be User*
 public: 
     Staff(string name, int id) : User(name, id, 5) {}
 
@@ -185,7 +185,9 @@ public:
 class Library {
 private:
     vector <Book> books;
-    vector <User*> users;
+    vector <User*> users; 
+    // User* is essential for inheritance & polymorphism.
+    // Since users can be Student or Staff, we store pointers (inherits) [User*]
     string filename;
     string userFile;
 
@@ -200,8 +202,8 @@ public:
         }
 
         for (size_t i = 0; i < users.size(); i++) {
-            User* u  = users[i];
-            outFile << u->getName() << " | " 
+            User* u  = users[i]; // Assign User u as users[i]
+            outFile << u->getName() << " | " // Here comes the polymorphism (->) 
                     << u->getID() << " | " 
                     << u->getType() << " | "
                     << u->getBorrowed() << endl;
@@ -219,21 +221,22 @@ public:
         }
 
         string line;
-        while (getline(inFile, line)) {
-            if (line.empty() || line.find(" | ") == string::npos) continue;
+        while (getline(inFile, line)) { // getline inFile into line
+            if (line.empty() || line.find(" | ") == string::npos) continue; 
+            // if line = 0 OR line didnt find " | "     string::npos (not found)
 
             size_t pos1 = line.find(" | ");
-            size_t pos2 = line.find(" | ", pos1 + 1);
-            size_t pos3 = line.find(" | ", pos2 + 1);
+            size_t pos2 = line.find(" | ", pos1 + 3);
+            size_t pos3 = line.find(" | ", pos2 + 3);
 
             string name = line.substr(0, pos1);
             int id = stoi(line.substr(pos1 + 3, pos2 - pos1 - 3));
             string type = line.substr(pos2 + 3, pos3 - pos2 - 3);
-            string borrowTitles = line.substr(pos3 + 1);
+            string borrowTitles = line.substr(pos3 + 3);
 
-            User* user = nullptr;
-            if (type == "Student") {
-                user = new Student(name, id);
+            User* user = nullptr; // create a box called user that can store address of User object = null (0)
+            if (type == "Student") { // ??? How it get type? from where 
+                user = new Student(name, id);  // assigns user as new to Student class(name, id)
             } else if (type == "Staff") {
                 user = new Staff(name, id);
             } else continue;
