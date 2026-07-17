@@ -229,27 +229,28 @@ public:
             size_t pos2 = line.find(" | ", pos1 + 3);
             size_t pos3 = line.find(" | ", pos2 + 3);
 
-            string name = line.substr(0, pos1);
-            int id = stoi(line.substr(pos1 + 3, pos2 - pos1 - 3));
-            string type = line.substr(pos2 + 3, pos3 - pos2 - 3);
-            string borrowTitles = line.substr(pos3 + 3);
+            string name = line.substr(0, pos1); // Get name
+            int id = stoi(line.substr(pos1 + 3, pos2 - pos1 - 3)); // Get ID of books
+            string type = line.substr(pos2 + 3, pos3 - pos2 - 3); // Get type data
+            string borrowTitles = line.substr(pos3 + 3); // Get borrow book's titles
 
             User* user = nullptr; // create a box called user that can store address of User object = null (0)
-            if (type == "Student") { // ??? How it get type? from where 
+            if (type == "Student") { // From upper data and get type data
                 user = new Student(name, id);  // assigns user as new to Student class(name, id)
             } else if (type == "Staff") {
                 user = new Staff(name, id);
             } else continue;
 
-            if (!borrowTitles.empty()) {
-                size_t start = 0;
-                while (start < borrowTitles.length()) {
-                    size_t end = borrowTitles.find(',', start);
-                    string title = borrowTitles.substr(start, end - start);
+            if (!borrowTitles.empty()) { // only if book is borrowed
+                size_t start = 0; 
+                while (start < borrowTitles.length()) { // while there's book 
+                    size_t end = borrowTitles.find(',', start); // Find from start and find ','
+                    string title = borrowTitles.substr(start, end - start); // title = ( start, how many index to cut)
 
                     for (size_t i = 0; i < books.size(); i++) {
                         if (toLower(books[i].getTitle()) == toLower(title)) {
-                            user->forceBorrow(&books[i]);
+                            user->forceBorrow(&books[i]); // address of book[i] is push to vector 
+                            // 
                             break;
                         }
                     }
