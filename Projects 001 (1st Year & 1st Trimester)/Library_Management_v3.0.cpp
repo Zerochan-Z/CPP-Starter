@@ -119,7 +119,9 @@ public:
     string getBorrowed() const {
         string titles;
         for (size_t i =0; i < borrowedBooks.size(); i++) {
-            if (i > 0) titles += ", "; // title = title + ", ";
+            if (i > 0) { // start with the second index
+                titles += ", "; // title = title + ", ";
+            }
             titles += borrowedBooks[i]->getTitle(); // title = borrowedBooks.title + title
         }
         return titles;
@@ -131,7 +133,7 @@ public:
         return false;
     }
 
-    bool borrowBook(Book* book) { // condition
+    bool borrowBook(Book* book) { // Modify ori data so used pointers
         if (Limit()) { // if borrowlimit > borrowedbooks 
             if (book->getStatus() == 'A') { // check whether book is available
                 borrowedBooks.push_back(book); // append to borrowedBooks
@@ -184,8 +186,8 @@ public:
 
 class Library {
 private:
-    vector <Book> books;
-    vector <User*> users; 
+    vector <Book> books; // copy
+    vector <User*> users; // Store different types of data
     // User* is essential for inheritance & polymorphism.
     // Since users can be Student or Staff, we store pointers (inherits) [User*]
     string filename;
@@ -202,7 +204,7 @@ public:
         }
 
         for (size_t i = 0; i < users.size(); i++) {
-            User* u  = users[i]; // Assign User u as users[i]
+            User* u  = users[i]; // Modifies u as users[i] (change to new)
             outFile << u->getName() << " | " // Here comes the polymorphism (->) 
                     << u->getID() << " | " 
                     << u->getType() << " | "
@@ -235,11 +237,11 @@ public:
             string borrowTitles = line.substr(pos3 + 3); // Get borrow book's titles
 
             User* user = nullptr; // create a box called user that can store address of User object = null (0)
-            if (type == "Student") { // From upper data and get type data
-                user = new Student(name, id);  // assigns user as new to Student class(name, id)
+            if (type == "Student") { // From line 235 code and get type data
+                user = new Student(name, id);  // assign to User vector and store as Student
             } else if (type == "Staff") {
-                user = new Staff(name, id);
-            } else continue;
+                user = new Staff(name, id); // Actually uses memory and provide address
+            } else continue; // if no delete = memory leak (memory cannot be reuse)
 
             if (!borrowTitles.empty()) { // only if book is borrowed
                 size_t start = 0; 
@@ -249,8 +251,8 @@ public:
 
                     for (size_t i = 0; i < books.size(); i++) {
                         if (toLower(books[i].getTitle()) == toLower(title)) {
-                            user->forceBorrow(&books[i]); // address of book[i] is push to vector 
-                            // 
+                            user->forceBorrow(&books[i]); 
+                            // because forceBorrow(pointer) so & (address) is required
                             break;
                         }
                     }
