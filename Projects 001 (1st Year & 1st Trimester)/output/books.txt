@@ -1,0 +1,6 @@
+New book | New Author | 1921 | A
+Book2 | Handsome guy | 2040 | A
+How to be pretty | Pretty girl | 2009 | A
+Schr”dinger's cat | My father | 1935 | B
+DogBoy AND CatGirl | Oslo Albet | 2009 | B
+Phigros | Pigeon games | 2019 | B
