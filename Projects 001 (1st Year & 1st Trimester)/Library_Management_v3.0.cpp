@@ -304,16 +304,17 @@ public:
     }
 
     void addUser(User* user) {
-        users.push_back(user);
+        users.push_back(user); // user -> vector users
         saveUsers();
     }
 
     bool borrowBook(int userID, string title) {
-        User* user = nullptr; // keep user as null in memory (User)
+        User* user = nullptr; // assign as zero first (nullptr) [point to nothing]
 
         for (size_t i = 0; i < users.size(); i++) {
             if (users[i]->getID() == userID) {
-                user = users[i];
+                // vector <User*> users -> store vector in address form 
+                user = users[i]; // if found assign as users[i] (address)
                 break; //search id
             }
         }
@@ -336,7 +337,8 @@ public:
             return false;
         }
 
-        if ( user->borrowBook(book)) { // call borrowbook from user class
+        // book is already an address (&books[i])
+        if (user->borrowBook(book)) { // so it works while using pointers
             saveUsers();
             return true;
         }
@@ -347,7 +349,7 @@ public:
         User* user = nullptr;
         for (size_t i = 0; i < users.size(); i++) {
             if (users[i]->getID() == userID) {
-                user = users[i];
+                user = users[i]; // same as borrowBook concept
                 break;
             }
         }
