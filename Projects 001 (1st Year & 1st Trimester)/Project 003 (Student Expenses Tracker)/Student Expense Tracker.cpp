@@ -65,6 +65,7 @@ public:
     void setYear(int y) { year = y; }
     void setCategory(string c) { category = c; }
     void setSubCategory(string s) { subcategory = s; }
+    void setDescription(string des) { description = des; }
     void setAmount(double a) { amount = a; }
     void setDistance(double d) { distance = d; }
 
@@ -74,6 +75,7 @@ public:
     int getYear() const { return year; }
     string getCategory() const { return category; }
     string getSubcategory() const { return subcategory; }
+    string getDescription() const { return description; }
     double getAmount() const { return amount; }
     double getDistance() const { return distance; }
     
@@ -104,36 +106,36 @@ public:
 
 
     void addExpense() {
+        /*  1. Enter date.
+            2. Enter category (Food, Transportation, Rental).
+            3. While user wants to continue:
+            a. Enter subcategory.
+            b. Enter amount.
+            c. Enter description (optional).
+            d. If category is Transportation → Enter distance.
+            e. Ask: "Add another expense for this date/category?"
+            4. Return to main menu.
+        */
+
         int choice;
+        int day, month, year;
+        string category, subcategory, description;
+        double amount, distance;
         
-        do {
-            cout << "\n1. Date\n";
-            cout << "2. Category\n";
-            cout << "3. Subcategory\n";
-            cout << "4. Description.\n";
-            cout << "5. Amount\n";
-            cout << "6. Distance\n";
-            cout << "7. Exit\n";
-            cout << "Enter choice: ";
-            cin >> choice;
-
-            switch (choice) {
-                case 1: {
-                    int day, month, year;
-                    cout << "Enter day: ";
-                    cin >> day;
-                    cout << "Enter month: ";
-                    cin >> month;
-                    cout << "Enter year: ";
-                    cin >> year;
-                    break;
-                }
-            }
-            Expense* e = nullptr;
-            e = new Expense(day, month)
-        } while (choice != 7);
-
+        cout << "Enter current day: ";
+        cin >> day;
+        cout << "Enter current month: ";
+        cin >> month;
+        cout << "Enter current year: ";
+        cin >> year;
+        cout << "Category: Food, Rental, Transportation, Others \n";
+        cout << "Enter your category: ";
+        cin >> category;
         
+        while (category == "food" || category == "transportation" || category == "rental" || category == "others") {
+            cout << "Enter subcategory: ";
+
+        }
     }
 };
 
