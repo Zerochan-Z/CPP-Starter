@@ -1,0 +1,4 @@
+4 | 8 | 2026 | Food | Vegetables | 14 | 0 | 
+4 | 8 | 2026 | Food | Vegetables | 13 | 0 | 
+4 | 8 | 2026 | Transportation | Bicycle | 0 | 1.93 | Tired
+4 | 8 | 2026 | Rental | Room | 180 | 0 | Selesa
