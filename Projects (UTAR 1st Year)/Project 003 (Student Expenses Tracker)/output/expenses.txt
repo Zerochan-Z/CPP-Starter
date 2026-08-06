@@ -1,4 +1,10 @@
-4 | 8 | 2026 | Food | Vegetables | 14 | 0 | 
-4 | 8 | 2026 | Food | Vegetables | 13 | 0 | 
-4 | 8 | 2026 | Transportation | Bicycle | 0 | 1.93 | Tired
-4 | 8 | 2026 | Rental | Room | 180 | 0 | Selesa
+1 | 8 | 2026 | Food | Vegetables | 12 | 0 | 
+2 | 8 | 2026 | Food | Fruits | 8 | 0 | Grapes
+3 | 8 | 2026 | Transportation | Car | 45 | 10.5 | 
+3 | 8 | 2026 | Food | Snacks | 6 | 0 | Chips and drinks
+4 | 8 | 2026 | Rental | Electricity | 75 | 0 | 
+4 | 8 | 2026 | Rental | Water | 30 | 0 | 
+5 | 8 | 2026 | Transportation | Bicycle | 0 | 3.2 | 
+6 | 8 | 2026 | Food | Vegetables | 9 | 0 | Broccoli and carrots
+6 | 8 | 2026 | Others | Stationery | 12 | 0 | Notebooks and pens
+7 | 8 | 2026 | Rental | Room | 350 | 0 | 
