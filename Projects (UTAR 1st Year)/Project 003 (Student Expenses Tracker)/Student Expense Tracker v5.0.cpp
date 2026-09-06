@@ -155,7 +155,7 @@ public:
         ifstream inFile("budget.txt");
         
         if (!inFile) {
-            cout << "No budget load.\n";
+            cout << "No file load.\n";
             return;
         }
 
@@ -163,7 +163,7 @@ public:
         getline(inFile, line);
         size_t pos1 = line.find(" | ");
         if (pos1 == string::npos) {
-            cout << "Empty file.\n";
+            cout << "File is empty.\n";
             return;
         }
         
@@ -213,6 +213,7 @@ public:
 class ExpenseTracker {
 private:
     vector <Expense> exp;
+    Budget myBud;
 
 public:
     ExpenseTracker() {}
@@ -270,7 +271,7 @@ public:
             distance = stod(line.substr(pos6 + 3, pos7 - pos6 - 3));
             string description = line.substr(pos7 + 3);
 
-            exp.push_back(Expense(day, month, year, category, subcategory, description, amount, distance));
+            exp.emplace_back(day, month, year, category, subcategory, description, amount, distance);
         }
 
         inFile.close();
@@ -313,6 +314,10 @@ public:
         cout << "CSV saved.\n";
     }
 
+    void setBudget(const Budget &b) {
+        myBud = b;
+    }
+
     void addExpense() {
         /*  1. Enter date.
             2. Enter category (Food, Transportation, Rental).
@@ -347,12 +352,13 @@ public:
                 distance = validDouble("Enter distance (km): ", 0.00);
             }
             
-            exp.push_back(Expense(day, month, year, category, subcategory, description, amount, distance));
+            exp.emplace_back(day, month, year, category, subcategory, description, amount, distance);
 
             char cont;
             do {
                 cout << "Continue? (Y/N): ";
                 cin >> cont;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 if (toupper(cont) == 'Y') {
                     repeat = true;
@@ -397,10 +403,12 @@ public:
                 << setw(20) << exp[i].getDescription();
             if (getLower(exp[i].getCategory()) == "transportation") {
             cout << left << setw(10) << exp[i].getDistance() << endl;
-            } cout << "\n\n";
+            } else {
+            cout << endl;
+            }
+
             last = getLower(exp[i].getCategory());
         }
-
         system("pause");
     }
 
@@ -433,66 +441,65 @@ public:
                 << setw(20) << list[i].getDescription();
             if (getLower(list[i].getCategory()) == "transportation") {
             cout << left << setw(10) << list[i].getDistance() << endl;
-            } cout << "\n\n";
+            } else {
+            cout << endl;
+            }
             last = getLower(list[i].getCategory());
         }
 
         system("pause");
     }
 
-    void displayReport(const Budget& bud) {
-        if (exp.empty()) {
-            cout << "No info to form report.\n";
-            return;
-        }
-
+    void displayReport() {
         double sum = 0;
         map<string, double> categorySum;
-        double budget = bud.getHousehold() + bud.getSalary();
-    
-        cout << fixed << setprecision(2);
 
+        cout << endl;
         for (size_t i = 0; i < exp.size(); i++) {
             sum += exp[i].getAmount();
             string cat = getLower(exp[i].getCategory());
             categorySum[cat] += exp[i].getAmount();
         }
 
-        cout << "\n" << string(30, '-') << " Report " << string(30, '-') << endl;
-        cout << left << setw(20) << "Budget"
-             << setw(20) << "Total Expenses"
-             << setw(10) << "CashFlow" << endl;
-
-        ostringstream budgetOSS, sumOSS, cashOSS;
-        budgetOSS << fixed << setprecision(2) << budget;
-        sumOSS << fixed << setprecision(2) << sum;
-        cashOSS << fixed << setprecision(2) << (budget - sum);
-    
-        cout << left << setw(20) << ("RM " + budgetOSS.str())
-             << setw(20) << ("RM " + sumOSS.str())
-             << setw(10) << ("RM " + cashOSS.str()) << endl;
-    
-        char choice;
-        cout << "\nDo you want to see category breakdown? (Y/N): ";
+        double budget = myBud.getHousehold() + myBud.getSalary();
+        cout << "\n" << string(30, '-') << "Report" << string(30, '-') << endl;
+        cout << left << setw(20) << "Budget" 
+             << setw(20) << "Total expenses" 
+             << setw(20) << "Cashflow" << endl;
         
-        cin >> choice;
+        ostringstream budgetoss, exposs, flowoss;
+        budgetoss << fixed << setprecision(2) << budget;
+        exposs << fixed << setprecision(2) << sum;
+        flowoss << fixed << setprecision(2) << (budget - sum);
 
+        cout << left << setw(20) << ("RM " + budgetoss.str())
+             << setw(20) << ("RM " + exposs.str())
+             << setw(20) << ("RM " + flowoss.str()) << endl;
+
+
+        char choice = ' ';
+        cout << "\nDo you need categorised breakdown? (Y/N): ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << endl;
         while (true) {
             if (toupper(choice) == 'Y') {
                 for (const auto &p : categorySum) {
                     ostringstream oss;
                     oss << fixed << setprecision(2) << p.second;
-                    cout << left << setw(30) << (p.first + ": ") 
+                    cout << left << setw(30) << (getTitle(p.first) + ": ")
                          << ("RM " + oss.str()) << endl;
                 }
                 system("pause");
                 break;
             } else if (toupper(choice) == 'N') {
-                cout << "End of report\n";
+                cout << "End of report.\n";
                 break;
             } else {
                 cout << "Invalid input. Please enter Y or N: ";
                 cin >> choice;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
         }
     }
@@ -579,16 +586,9 @@ public:
 
         int options;
         do {
-            cout << "\n1. Edit date.\n";
-            cout << "2. Edit Category.\n";
-            cout << "3. Edit Subcategory.\n";
-            cout << "4. Edit Amount.\n";
-            cout << "5. Edit Description.\n";
-            cout << "6. Edit Distance.\n";
-            cout << "7. Cancel.\n";
-            cout << "Enter choice: ";
-            cin >> options;
-
+            options = validInt("\n1. Edit date.\n2. Edit Category.\n3. Edit Subcategory.\n4. Edit Amount.\n5. Edit Description.\n6. Edit Distance.\n7. Cancel.\nEnter Choice: ", 1, 7);
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            
             switch (options) {
                 case 1: {
                     int newDay, newMonth, newYear;
@@ -690,9 +690,16 @@ public:
 
         char choice;
         do {
-            cout << "Are you sure to delete " << index << " expense?" << endl;
+            cout << "Are you sure to delete no." << index << " expense?" << endl;
             cout << "Enter (Y/N): ";
             cin >> choice;
+
+            while (cin.fail()) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Please enter the (Y/N): ";
+                cin >> choice;
+            }
 
             if (toupper(choice) == 'Y') {
                 exp.erase(exp.begin() + (index - 1));
@@ -715,6 +722,7 @@ int main() {
 
     ExpenseTracker track;
     track.loadExpenses();
+    track.setBudget(bud);
 
     int choice;
 
@@ -726,7 +734,8 @@ int main() {
         cout << "5. Export to CSV.\n";
         cout << "6. Sort by Date.\n";
         cout << "7. Edit expense.\n";
-        cout << "8. Exits.\n";
+        cout << "8. Delete expense.\n";
+        cout << "9. Exit\n";
         choice = validInt("Enter choice: ", 1, 9);
 
         switch (choice) {
@@ -737,11 +746,12 @@ int main() {
                 part = validDouble("Enter part-time salary (RM): ", 0.00);
                 bud.setSalary(part);
                 bud.saveBudget();
+                track.setBudget(bud);
                 break;
             }
             case 2: track.addExpense(); break;
             case 3: track.viewExpenseHistory(); break;
-            case 4: track.displayReport(bud); break;
+            case 4: track.displayReport(); break;
             case 5: track.exportCSV(); break;
             case 6: track.sortByDate(); break;
             case 7: track.editExpense(); break;
