@@ -10,3 +10,4 @@
 7 | 8 | 2026 | Rental | Room | 350 | 0 | 
 6 | 9 | 2026 | Food | Restaurant | 126.6 | 0 | Very expensive
 6 | 9 | 2026 | Food | Canteen | 6 | 0 | 
+7 | 9 | 2026 | Food | Canteen | 8 | 0 | 

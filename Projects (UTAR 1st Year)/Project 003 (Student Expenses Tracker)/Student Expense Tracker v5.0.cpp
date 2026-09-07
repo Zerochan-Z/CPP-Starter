@@ -163,7 +163,7 @@ public:
         getline(inFile, line);
         size_t pos1 = line.find(" | ");
         if (pos1 == string::npos) {
-            cout << "File is empty.\n";
+            cout << "Budget file format error.\n";
             return;
         }
         
@@ -356,7 +356,7 @@ public:
 
             char cont;
             do {
-                cout << "Continue? (Y/N): ";
+                cout << "Continue with current category? (Y/N): ";
                 cin >> cont;
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -567,7 +567,9 @@ public:
                 << setw(20) << exp[i].getDescription();
             if (getLower(exp[i].getCategory()) == "transportation") {
             cout << left << setw(10) << exp[i].getDistance() << endl;
-            } cout << "\n\n";
+            } else {
+                cout << "\n";
+            }
         }
 
         int index;
@@ -673,7 +675,9 @@ public:
                 << setw(20) << exp[i].getDescription();
             if (getLower(exp[i].getCategory()) == "transportation") {
             cout << left << setw(10) << exp[i].getDistance() << endl;
-            } cout << "\n\n";
+            } else {
+                cout << endl;
+            }
         }
 
         int index;
@@ -693,6 +697,7 @@ public:
             cout << "Are you sure to delete no." << index << " expense?" << endl;
             cout << "Enter (Y/N): ";
             cin >> choice;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
             while (cin.fail()) {
                 cin.clear();
@@ -705,6 +710,7 @@ public:
                 exp.erase(exp.begin() + (index - 1));
                 saveExpense();
                 cout << "Expense " << index << " successfully deleted.\n";
+                break;
             } else if (toupper(choice) == 'N') {
                 cout << "Cancelled.\n";
                 return;
